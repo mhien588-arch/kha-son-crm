@@ -1,5 +1,5 @@
 # HỆ THỐNG VẬN HÀNH — KHA SƠN GREEN HOME
-> Dự án: Đất nền KCN Phú Bình, Thái Nguyên | Cập nhật: 20/05/2026 (phiên 22)
+> Dự án: Đất nền KCN Phú Bình, Thái Nguyên | Cập nhật: 20/05/2026 (phiên 23)
 
 ---
 
@@ -34,7 +34,7 @@
 |--------|-----------|---------------|
 | **config.json** | ✅ **Phiên 16** — thêm `nurture_days: 14` — ngưỡng ngày nhắc giữ tương tác khách "Không còn nhu cầu" | — |
 | tracker.py | ✅ **Phiên 19** — fix bug row-index: `cap_nhat_trang_thai()` và `chuyen_leads_giua_sale()` dùng sheet-row thực tế (không còn `pidx + 2`) | **Google Sheets** + config.json |
-| sheets_connector.py | ✅ **Phiên 22** — thêm `@retry_api_call` (Exponential Backoff chặn lỗi 429 Quota Exceeded) + `backup_to_csv()` lưu bản sao lưu kép dạng `utf-8-sig` | Google Sheets API |
+| sheets_connector.py | ✅ **Phiên 23** — thêm `_get_credentials()` hỗ trợ Streamlit Secrets (cloud) + fallback file local (máy tính); **Phiên 22**: `@retry_api_call` Exponential Backoff + `backup_to_csv()` | Google Sheets API |
 | daily_report.py | ✅ **Phiên 22** — tự động gọi `backup_to_csv()` ngay khi khởi chạy báo cáo | **Google Sheets** + config.json |
 | weekly_report.py | ✅ **Tạo mới phiên 11** — Báo cáo tuần + phân tích nguồn lead → `bao_cao_tuan_W{N}_2026.txt` | **Google Sheets** + config.json |
 | Bao Cao Tuan.bat | ✅ **Tạo mới phiên 11** — double-click để chạy weekly_report.py | — |
@@ -43,9 +43,11 @@
 | Nhac Sang.bat | ✅ **Tạo mới phiên 12** — double-click để test nhac_sang.py thủ công | — |
 | cleanup_reports.py | ✅ **Tạo mới phiên 12** — zip báo cáo tháng cũ vào archive/, giữ tháng hiện tại | — |
 | Don Dep Bao Cao.bat | ✅ **Tạo mới phiên 12** — double-click để chạy cleanup_reports.py | — |
-| dashboard.py | ✅ **Tạo mới phiên 22** — Web Dashboard CRM chuẩn Navy (biểu đồ Plotly, bộ lọc thông minh, chỉnh sửa thời gian thực, Staging, Nhập lead số lượng lớn chống trùng, định dạng SĐT `0982 287 863` và bộ quét `clean_html` chống lỗi hiển thị thô) | **Google Sheets** + config.json |
+| dashboard.py | ✅ **Phiên 23** — đổi `page_title="CRM BKD2"` (tên icon màn hình điện thoại); **Phiên 22**: Web Dashboard CRM chuẩn Navy (biểu đồ Plotly, bộ lọc thông minh, chỉnh sửa thời gian thực, Staging, Nhập lead số lượng lớn chống trùng, định dạng SĐT `0982 287 863` và bộ quét `clean_html`) | **Google Sheets** + config.json |
 | Mo Dashboard.bat | ✅ **Tạo mới phiên 22** — chạy Streamlit trên môi trường python3.13 | — |
 | C:\Users\PC\Desktop\Mo CRM Kha Son.bat | ✅ **Tạo mới phiên 22** — Launcher thông minh ngoài Desktop, kiểm tra xung đột cổng, khởi động/mở trình duyệt nhanh | — |
+| **GitHub repo** | ✅ **Phiên 23** — `github.com/mhien588-arch/kha-son-crm` (public) — nguồn deploy tự động cho Streamlit Cloud | — |
+| **Streamlit Community Cloud** | ✅ **Phiên 23** — App live tại `https://kha-son-crm-k3tfrnb488ckvq4nb5xsm7.streamlit.app` — team truy cập từ điện thoại, thêm vào màn hình chính như app thật | Cloud |
 | fix_and_validate_crm.py | ✅ **Phiên 16** — cài date picker (calendar) cho cột G "Ngày tiếp cận" và H "Ngày tương tác cuối", rows 2–300 | Google Sheets API |
 | **Huong_Dan_Truong_Nhom.docx** | ✅ **Tạo mới phiên 13** — hướng dẫn vận hành tổng hợp 10 chương dành cho Hiển | — |
 | **Huong_Dan_Nhan_Su.docx** | ✅ **Tạo mới phiên 13** — hướng dẫn nhân sự mới 9 chương (trạng thái, quy trình, KPI, kịch bản) | — |
@@ -1012,6 +1014,67 @@ Lần 2: [19/05 Sale: Hiển→Chị Dung] [20/05 Sale: Chị Dung→Đức]
 
 ---
 
+### Phiên 23 — 20/05/2026 — Deploy Dashboard lên Streamlit Community Cloud & Đổi Tên App
+
+**Vấn đề phát sinh & Yêu cầu mới:**
+- `dashboard.py` chỉ chạy được trên máy Hiển (`D:\QuanLyBKD2`) — cả team không truy cập được từ điện thoại
+- Cần deploy lên cloud miễn phí để team dùng như app thật, thêm vào màn hình chính điện thoại
+
+**Đã hoàn thành:**
+
+**A. Chuẩn bị Deploy**
+- Sửa `sheets_connector.py` — thêm `_get_credentials()` hỗ trợ 2 môi trường: thử `st.secrets["google_credentials"]` trước (Streamlit Cloud), fallback về `data/google_creds.json` (local). Ba hàm `_get_ws()`, `migrate_user_guide()`, `ensure_staging_tab()` đều dùng hàm mới này. Local system (tracker.py, Mo Dashboard.bat) **hoàn toàn không bị ảnh hưởng**.
+- Tạo `.streamlit/secrets.toml` — local only, gitignored — chứa toàn bộ Google Service Account credentials dạng TOML `[google_credentials]`
+- Cập nhật `.gitignore` — thêm `.streamlit/secrets.toml`
+- `requirements.txt` và `.streamlit/config.toml` đã có từ phiên 22, không cần tạo thêm
+
+**B. Git & GitHub**
+- `git init` → commit 44 files → commit hash `855ea9f` "Initial commit: Kha Son Green Home CRM"
+- Tạo repo `kha-son-crm` trên GitHub tại `https://github.com/mhien588-arch/kha-son-crm.git`
+- Push thành công toàn bộ codebase (trừ các file gitignored)
+
+**C. Deploy Streamlit Community Cloud**
+- Vào `share.streamlit.io` → New app → chọn repo `kha-son-crm` → branch `main` → main file: `dashboard.py`
+- Advanced settings → Secrets → paste nội dung `.streamlit/secrets.toml`
+- **Lỗi "This repository does not exist"**: Streamlit OAuth chỉ có quyền `Access public repositories`, không truy cập được private repo
+- **Fix**: Đổi repo từ **private → public** (an toàn: credentials gitignored, code không nhạy cảm)
+- **App live**: `https://kha-son-crm-k3tfrnb488ckvq4nb5xsm7.streamlit.app`
+- Xác minh: Dashboard load đúng, hiện 65 khách hàng, phễu + leaderboard hoạt động
+
+**D. Đổi Tên App**
+- Sửa `dashboard.py` dòng 20: `page_title="CRM BKD2"` (trước: "Kha Sơn Green Home — CRM Dashboard")
+- Push commit `6a56ef8` → Streamlit Cloud tự động deploy lại
+
+**E. Hướng dẫn Thêm vào Màn Hình Chính**
+- **Android (Chrome)**: Menu 3 chấm → "Thêm vào màn hình chính"
+- **iPhone**: Phải dùng **Safari** (không phải Chrome — Chrome iOS không có tính năng này) → nút Share ↑ → "Thêm vào màn hình chính"
+- Xác nhận: Hiển đã cài thành công trên iPhone qua Safari
+
+**Lỗi phát sinh và cách xử lý:**
+
+| Lỗi | Nguyên nhân | Cách fix |
+|-----|------------|----------|
+| "This repository does not exist" trên Streamlit | Repo private; Streamlit OAuth app chỉ có quyền `public_repo` | Đổi repo thành public — credentials đã gitignored nên không có rủi ro |
+| Chrome iOS không có "Thêm vào màn hình chính" | Apple/Chrome iOS giới hạn tính năng PWA — chỉ Safari được phép | Dùng Safari thay Chrome trên iPhone/iPad |
+| Git không nhận lệnh trong PowerShell | PATH chưa refresh sau khi cài Git for Windows | Dùng đường dẫn đầy đủ `C:\Program Files\Git\cmd\git.exe` |
+
+**Quyết định kiến trúc phiên 23:**
+
+| Quyết định | Lý do |
+|-----------|-------|
+| Đổi repo từ private → public | Streamlit Community Cloud free tier chỉ hỗ trợ public repo; credentials đã gitignored, code không chứa thông tin nhạy cảm |
+| `_get_credentials()` backward-compatible | Local system hoàn toàn không bị ảnh hưởng; chỉ cloud path mới dùng Streamlit Secrets — không cần sửa gì ở tracker.py hay các script khác |
+| `page_title="CRM BKD2"` | Tên ngắn gọn, phù hợp icon màn hình điện thoại; "Kha Sơn Green Home — CRM Dashboard" quá dài, bị cắt bớt khi hiện icon |
+| Dùng Safari thay Chrome trên iPhone | Giới hạn của Apple/Chrome iOS — đây là yêu cầu hệ thống, không phải lựa chọn |
+| Không dùng GitHub App (chỉ OAuth) | Đơn giản hơn; public repo đủ cho nhu cầu; không cần cấp quyền rộng hơn |
+
+**Giới hạn của Streamlit Community Cloud (cần lưu ý):**
+- App **ngủ sau 7 ngày** không dùng → lần mở đầu sau khi ngủ chậm ~30 giây (tự thức dậy)
+- **Filesystem không persistent** → backup CSV cục bộ (`backup_to_csv()`) không hoạt động trên cloud — chỉ chạy trên máy tính
+- Mọi thay đổi `config.json` (sale team, remind days) vẫn phải thực hiện qua `tracker.py` trên máy tính → commit → push → Streamlit Cloud tự deploy lại
+
+---
+
 ## BƯỚC TIẾP THEO (phiên làm việc sau)
 
 ### Giai đoạn 1 — Hoàn thành ✅ (phiên 10)
@@ -1041,12 +1104,19 @@ Tất cả tính năng vá lỗ hổng đã được triển khai và xác minh 
 - ✅ **13 leads bị mất đã được khôi phục (phiên 20)**: Dùng ảnh chụp tab SỐ MỚI KS làm nguồn → reimport 14 leads vào CRM trực tiếp qua script `_reimport_chi_dung.py` (đã xóa sau khi dùng). CRM hiện có **72 leads**, Chị Dung: 18 leads.
 - ✅ **Hướng dẫn tổng quan PDF (phiên 20)**: Tạo `Huong_Dan_Toan_Dien_CRM.docx` + `.pdf` — 8 phần đầy đủ bao gồm 10 lỗi thường gặp, hướng dẫn sửa thủ công và checklist xử lý sự cố.
 - ✅ **Bug TypeError int64 khi chuyển lead (phiên 21)**: Đã fix `sheets_connector.py:98` — `delete_crm_row()` dùng `int()` convert numpy.int64 → Python int; menu [7][e] hoạt động bình thường.
-- ⏳ **Kích hoạt Task Scheduler**: Chạy `setup_task_scheduler.py` với quyền Admin trên máy Hiển → đăng ký task `KhaSon_NhacNhoSang`
+- ✅ **Deploy Dashboard lên Streamlit Cloud (phiên 23)**: App live tại `https://kha-son-crm-k3tfrnb488ckvq4nb5xsm7.streamlit.app` — team truy cập từ điện thoại.
+- ✅ **Đổi tên app thành CRM BKD2 (phiên 23)**: `page_title="CRM BKD2"` trong `dashboard.py`, push lên GitHub, Streamlit Cloud auto-deploy.
+- ✅ **Hiển đã cài app vào màn hình iPhone (phiên 23)**: Dùng Safari → Share → Thêm vào màn hình chính.
+- ⏳ **Hướng dẫn 5 thành viên còn lại cài app vào màn hình điện thoại**: Đức, Sơn, Tuấn Anh, Nam, Tiến — Android dùng Chrome, iPhone dùng Safari → Share → Thêm vào màn hình chính. URL: `https://kha-son-crm-k3tfrnb488ckvq4nb5xsm7.streamlit.app`
+- ⏳ **Kích hoạt Task Scheduler**: Chạy `setup_task_scheduler.py` với quyền Admin trên máy Hiển → đăng ký task `KhaSon_NhacNhoSang` (nhắc nhở tự động 8:00 sáng T2–T7)
 - ⏳ **In hoặc gửi file Word**: Gửi `Huong_Dan_Nhan_Su.docx` cho Nam và Tiến khi onboard; `Huong_Dan_Toan_Dien_CRM.pdf` cho Hiển tham khảo kỹ thuật
 - ⏳ **zalo_notify.py**: Triển khai khi có Zalo OA Access Token từ business.zalo.me
+- ⏳ **Cập nhật config khi thêm/bớt sale**: Dùng menu [7] trong tracker.py → commit `config.json` → push lên GitHub → Streamlit Cloud tự deploy lại để cloud cũng thấy team mới
 - ⚠️ **Quy tắc bất biến staging**: Nếu thêm cột mới vào `COLUMNS` trong tương lai, phải kiểm tra lại CẢ HAI `append_staging_row()` VÀ `load_staging_data()` — cả 2 đều phải dùng `COLUMNS[:8]`
 - ⚠️ **Ghi chú lead Anh Chính (0372122972)**: Xuất hiện trong ảnh chụp nhưng không có trong danh sách 13 leads bị mất — có thể đã được chuyển đúng trước đó hoặc là lead đã tồn tại của Chị Dung. Khi kiểm tra CRM [2], nếu thấy Anh Chính trùng lặp thì xóa 1 bản.
 - ⚠️ **Quy tắc bất biến int64**: Mọi hàm truyền DataFrame index vào gspread API phải wrap bằng `int()`. DataFrame index từ pandas luôn là `numpy.int64`, không phải Python `int`. Các hàm cần check: `delete_crm_row()` (đã fix), bất kỳ hàm nào dùng `.delete_rows()` hoặc `.delete_columns()` trong tương lai.
+- ⚠️ **Quy tắc bất biến Streamlit Cloud**: Filesystem cloud không persistent → backup CSV chỉ chạy trên máy tính, không chạy trên cloud. Mọi thay đổi config vẫn phải qua tracker.py trên máy → commit → push.
+- ⚠️ **Streamlit Cloud ngủ sau 7 ngày**: Nếu không ai dùng 7 ngày, lần mở tiếp theo chậm ~30 giây. Không cần lo — tự thức dậy, không mất data.
 
 ---
 
