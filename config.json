@@ -1,0 +1,86 @@
+{
+  "sale_team": [
+    "Hiển",
+    "Đức",
+    "Tuấn Anh",
+    "Nam",
+    "Chị Dung"
+  ],
+  "remind_days": 3,
+  "nurture_days": 14,
+  "assign_mode": "random",
+  "sheet_id": "1syWcPK_YopGk2XtIYegDgHwnR6YPOHOoZmiN4ze-yjA",
+  "worksheet_name": "KhaSonGreenHome_CRM",
+  "kpi": {
+    "lead_moi_per_tuan": 20,
+    "xem_dat_per_tuan": 5,
+    "chot_coc_per_thang": 3,
+    "cpl_max": 100000
+  },
+  "project": {
+    "ten_du_an": "Kha Sơn Green Home",
+    "hotline": "0368.557.832",
+    "khu_vuc": "KCN Phú Bình, Thái Nguyên",
+    "gia_tu": "chỉ từ 800 triệu",
+    "dien_tich": "80–120m²",
+    "phap_ly": "Sổ đỏ lâu dài, pháp lý minh bạch"
+  },
+  "streaks": {
+    "Đức": {
+      "count": 0,
+      "last_date": "2026-05-20"
+    },
+    "Tuấn Anh": {
+      "count": 0,
+      "last_date": "2026-05-20"
+    },
+    "Nam": {
+      "count": 0,
+      "last_date": "2026-05-20"
+    },
+    "Chị Dung": {
+      "count": 0,
+      "last_date": "2026-05-20"
+    }
+  },
+  "golden_day": {
+    "week": 21,
+    "day_of_week": 2
+  },
+  "teams": {
+    "Đỏ": [
+      "Tuấn Anh",
+      "Chị Dung"
+    ],
+    "Xanh": [
+      "Đức",
+      "Nam"
+    ]
+  },
+  "weekly_targets": {
+    "Đức": {
+      "lead": 0,
+      "xem_dat": 0
+    },
+    "Tuấn Anh": {
+      "lead": 0,
+      "xem_dat": 0
+    },
+    "Nam": {
+      "lead": 0,
+      "xem_dat": 0
+    },
+    "Chị Dung": {
+      "lead": 0,
+      "xem_dat": 0
+    }
+  },
+  "badges_earned": {
+    "Đức": [],
+    "Tuấn Anh": [],
+    "Nam": [],
+    "Chị Dung": [
+      "ve_si"
+    ]
+  }
+}

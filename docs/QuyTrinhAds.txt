@@ -1,0 +1,151 @@
+# QUY TRÌNH CHẠY ADS FACEBOOK — KHA SƠN GREEN HOME
+> Cập nhật: 01/05/2026 | Người phụ trách: 0368.557.832
+
+---
+
+## THÔNG TIN TÀI KHOẢN
+
+| Hạng mục | Chi tiết |
+|----------|---------|
+| Tài khoản FB Ads | 5541483774484 31 |
+| Fanpage | Kha Sơn Green Home |
+| Mục tiêu campaign | Khách hàng tiềm năng (Lead Gen) |
+| Hạng mục đặc biệt | Nhà ở (bắt buộc với BĐS) |
+| Hotline | 0368.557.832 |
+
+---
+
+## CẤU TRÚC CAMPAIGN ĐÃ TẠO
+
+```
+Campaign: Kha Son - Lead - T4/2026
+  └── Ad Set: KSG - Thai Nguyen - 28-50
+        ├── Ngân sách: 100.000đ/ngày
+        ├── Khu vực: Thái Nguyên (ưu tiên)
+        ├── Tuổi: 28–50
+        ├── Vị trí: Facebook only (thủ công)
+        └── Ad: KSG - Drone - Copy1
+              ├── Ảnh: Drone thực tế dự án
+              └── Lead Form: Họ tên + SĐT
+```
+
+---
+
+## QUY TRÌNH TẠO CAMPAIGN MỚI (từ đầu)
+
+### Bước 1 — Vào Ads Manager
+- Truy cập: adsmanager.facebook.com
+- Chọn đúng tài khoản quảng cáo
+
+### Bước 2 — Tạo Campaign
+1. Click **"+ Tạo"**
+2. Mục tiêu → chọn **"Khách hàng tiềm năng"**
+3. Hạng mục quảng cáo đặc biệt → chọn **"Nhà ở"**
+4. Đặt tên: `KSG - [Loại target] - [Tháng/Năm]`
+5. Ngân sách: đặt ở cấp Ad Set (không dùng Campaign Budget)
+
+### Bước 3 — Tạo Ad Set
+1. Đặt tên: `KSG - [Khu vực] - [Tuổi]`
+2. Ngân sách: **100.000đ/ngày** (giai đoạn test)
+3. Địa điểm: Thái Nguyên → Hà Nội → Bắc Giang
+4. Tuổi: **28–50**
+5. Sở thích: Đầu tư BĐS, Batdongsan.com.vn, KCN Phú Bình
+6. Vị trí quảng cáo: **Thủ công** → chỉ tick Facebook (bỏ Instagram)
+7. Chấp nhận Lead Ads Terms nếu được hỏi
+
+### Bước 4 — Tạo Ad
+1. Chọn Fanpage: Kha Sơn Green Home
+2. Định dạng: Ảnh đơn HOẶC Video
+3. Upload ảnh/video từ thư mục `d:\W- Chiến dịch lên camp facebook\`
+4. Nội dung bài: copy từ CLAUDE.md (Bài 1 / 2 / 3)
+5. Nút CTA: **"Đăng ký"** hoặc **"Tìm hiểu thêm"**
+6. Tạo Lead Form mới:
+   - Thêm trường: Họ tên + Số điện thoại
+   - Privacy Policy: tắt (không bắt buộc)
+   - Màn hình cảm ơn: ghi hotline 0368.557.832
+
+### Bước 5 — Kiểm tra & Đăng
+- [ ] Xem trước trên mobile
+- [ ] Kiểm tra lead form hoạt động
+- [ ] Bấm **"Đăng"**
+- [ ] Chờ duyệt 1–48h (BĐS lâu hơn thường)
+
+---
+
+## QUY TẮC VẬN HÀNH
+
+### Mỗi sáng (5 phút)
+1. Mở Ads Manager
+2. Xem 3 chỉ số: **Chi phí đã dùng | Số lead | CPL**
+3. So sánh với mục tiêu CPL < 100.000đ
+
+### Quyết định sau 3 ngày
+| Kết quả | Hành động |
+|---------|----------|
+| CPL < 100k | Giữ nguyên, chờ ổn định |
+| CPL 100–200k | Theo dõi thêm 2 ngày |
+| CPL > 200k | Tắt ngay, test mẫu mới |
+| Không có lead | Kiểm tra form, ảnh, target |
+
+### Khi muốn scale
+- Tăng ngân sách tối đa **30% mỗi 48 giờ**
+- KHÔNG chỉnh sửa ads đang chạy tốt
+- **Duplicate** ad set → test biến thể mới
+
+### Tuyệt đối không làm
+- Không sửa ads trong 3 ngày đầu (phá vỡ học máy)
+- Không tăng ngân sách đột ngột > 30%
+- Không xóa ads rồi tạo lại cùng nội dung
+
+---
+
+## TÀI NGUYÊN SẴN CÓ
+
+### Ảnh (thư mục gốc)
+- 2 ảnh drone thực tế (z7731569...jpg) — góc rộng, thấy dự án + KCN
+- 29 ảnh marketing đêm (z7743367...jpg) — có logo, tagline
+
+### Video
+- `Chạy ADS KS\Chạy ADS KS.mp4` — video dọc 9:16, drone, ~81MB
+- Cover: `Chạy ADS KS\Chạy ADS KS-Cover.jpg`
+
+### Nội dung bài đăng
+- Bài 1: Giới thiệu dự án → xem CLAUDE.md
+- Bài 2: Tiềm năng đầu tư → xem CLAUDE.md
+- Bài 3: Pháp lý & Hạ tầng → xem CLAUDE.md
+
+---
+
+## CHỈ SỐ THEO DÕI
+
+| Chỉ số | Mục tiêu | Ngưỡng dừng |
+|--------|---------|------------|
+| CPL | < 100.000đ | > 200.000đ sau 3 ngày |
+| CTR | > 1% | < 0,5% |
+| Tần suất | < 3 | > 4 → thay creative |
+| Lead chất lượng | > 30% có nhu cầu thật | — |
+
+---
+
+## CÁC LỖI THƯỜNG GẶP & CÁCH XỬ LÝ
+
+| Lỗi | Nguyên nhân | Cách xử lý |
+|-----|------------|-----------|
+| Thẻ bị từ chối | Hạn mức thẻ thấp | Dùng thẻ khác hoặc nạp ví |
+| Lead Ads Terms | Chưa chấp nhận điều khoản | Click "Xem điều khoản" → chấp nhận |
+| Privacy Policy lỗi | Chưa có URL | Tắt trường này trong lead form |
+| Ads bị từ chối | Ảnh/text vi phạm chính sách | Xem lý do → đổi ảnh hoặc chỉnh text |
+| Không tìm thấy vị trí manual | Đang dùng Advantage+ | Chuyển sang "Thủ công" trong phần Vị trí |
+| Nút "Tạo mẫu" không click được | Dùng Business Suite đơn giản | Chuyển sang adsmanager.facebook.com |
+
+---
+
+## LỊCH SỬ CAMPAIGN
+
+| Ngày | Hành động | Kết quả |
+|------|----------|--------|
+| 30/04/2026 | Tạo Fanpage, đăng 3 bài | Hoàn thành |
+| 30/04/2026 | Tạo Campaign + Ad Set + Ad + Lead Form | Hoàn thành |
+| 30/04/2026 | Đăng campaign (Đang xử lý) | Tạm dừng để ôn kiến thức |
+| 01/05/2026 | Sửa vị trí → Facebook only | Hoàn thành |
+| 01/05/2026 | Thêm video Chạy ADS KS.mp4 | Chờ chạy |

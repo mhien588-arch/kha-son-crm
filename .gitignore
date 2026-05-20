@@ -1,0 +1,22 @@
+# Credentials nhạy cảm
+data/google_creds.json
+.streamlit/secrets.toml
+
+# Cấu hình local (nếu muốn chia sẻ code nhưng giữ config riêng)
+# config.json
+
+# Backup cục bộ dữ liệu khách hàng
+data/backups/
+archive/
+
+# Báo cáo hàng ngày và hàng tuần được tạo ra
+bao_cao_*.txt
+tien_do_*.txt
+
+# Python & IDE caches
+__pycache__/
+*.py[cod]
+*$py.class
+.vscode/
+.idea/
+.claude/
