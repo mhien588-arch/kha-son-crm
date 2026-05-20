@@ -17,7 +17,7 @@ import textwrap
 
 # Thiết lập cấu hình trang Streamlit với icon và tiêu đề chuyên nghiệp
 st.set_page_config(
-    page_title="Kha Sơn Green Home — CRM Dashboard",
+    page_title="CRM BKD2",
     page_icon="🏠",
     layout="wide",
     initial_sidebar_state="expanded"
