@@ -19,7 +19,7 @@ except ImportError:
 from sheets_connector import (load_data, append_row, update_row, COLUMNS, load_config, save_config,
                                highlight_new_row, unhighlight_row,
                                append_staging_row, load_staging_data, transfer_checked_leads,
-                               delete_crm_row)
+                               delete_crm_row, load_telesale_data, transfer_telesale_checked)
 
 # ── CẤU HÌNH — tải từ config.json (chỉnh qua menu [7], không sửa tay) ─────
 _DEFAULT_TEAM = ["Hiển", "Đức", "Sơn", "Tuấn Anh"]
@@ -164,6 +164,14 @@ def _show_staging_banner():
     print(Fore.YELLOW + f"  📥 SỐ MỚI KS: {n} khách chờ xử lý — tích ✓ trong Sheets rồi nhấn [9]")
 
 
+def _show_telesale_banner():
+    tele_df, _ = load_telesale_data()
+    n = len(tele_df)
+    if n == 0:
+        return
+    print(Fore.MAGENTA + f"  📞 DATA TELESALE: {n} số chờ gọi — tích ✓ trong Sheets rồi nhấn [T]")
+
+
 def xu_ly_so_moi(df):
     print(Fore.YELLOW + "  Đang kiểm tra SỐ MỚI KS...")
     names = transfer_checked_leads()
@@ -176,6 +184,21 @@ def xu_ly_so_moi(df):
         print(Fore.GREEN + f"    → {n}")
     df = load_data()
     _show_staging_banner()
+    return df
+
+
+def xu_ly_data_telesale(df):
+    print(Fore.MAGENTA + "  Đang kiểm tra DATA TELESALE...")
+    names = transfer_telesale_checked()
+    if not names:
+        print(Fore.YELLOW + "  Chưa có số nào tích ✓.")
+        _show_telesale_banner()
+        return df
+    print(Fore.GREEN + f"  ✔ Đã chuyển {len(names)} khách từ DATA TELESALE vào CRM:")
+    for n in names:
+        print(Fore.GREEN + f"    → {n}")
+    df = load_data()
+    _show_telesale_banner()
     return df
 
 
@@ -665,8 +688,13 @@ def main():
     if names:
         df = load_data()
         print(Fore.GREEN + f"  ✔ Đã chuyển {len(names)} khách từ SỐ MỚI KS vào CRM.")
+    tele_names = transfer_telesale_checked()
+    if tele_names:
+        df = load_data()
+        print(Fore.GREEN + f"  ✔ Đã chuyển {len(tele_names)} khách từ DATA TELESALE vào CRM.")
     _show_nhu_cau_banner(df)
     _show_staging_banner()
+    _show_telesale_banner()
     _show_new_leads_today(df)
     while True:
         overdue_count = sum(
@@ -704,6 +732,7 @@ def main():
         print(Fore.CYAN + "  [7] Quản lý team sale")
         print(Fore.WHITE + "  [8] Tìm kiếm theo SĐT")
         print(Fore.YELLOW + "  [9] Xử lý SỐ MỚI KS (chuyển lead đã tích ✓)")
+        print(Fore.MAGENTA + "  [T] Xử lý DATA TELESALE (chuyển lead đã tích ✓)")
         print(Fore.WHITE + "  [0] Thoát\n")
         choice = input("  Chọn: ").strip()
 
@@ -725,9 +754,14 @@ def main():
             if names:
                 df = load_data()
                 print(Fore.GREEN + f"  ✔ Đã chuyển {len(names)} khách từ SỐ MỚI KS vào CRM.")
+            tele_names = transfer_telesale_checked()
+            if tele_names:
+                df = load_data()
+                print(Fore.GREEN + f"  ✔ Đã chuyển {len(tele_names)} khách từ DATA TELESALE vào CRM.")
             print(Fore.GREEN + f"  ✔ Đã cập nhật — {len(df)} khách hàng.")
             _show_nhu_cau_banner(df)
             _show_staging_banner()
+            _show_telesale_banner()
             _show_new_leads_today(df)
         elif choice == "7":
             df = quan_ly_team(df)
@@ -735,6 +769,8 @@ def main():
             df = tim_kiem_sdt(df)
         elif choice == "9":
             df = xu_ly_so_moi(df)
+        elif choice.upper() == "T":
+            df = xu_ly_data_telesale(df)
         elif choice == "0":
             print("Tạm biệt!")
             break

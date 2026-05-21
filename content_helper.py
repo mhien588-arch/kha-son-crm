@@ -299,6 +299,7 @@ def main():
         print(f"\n  [{Fore.YELLOW}1{Fore.CYAN}] Kịch bản TELESALE   — gây ấn tượng 30 giây")
         print(f"  [{Fore.YELLOW}2{Fore.CYAN}] Bài đăng FACEBOOK   — thu hút tương tác")
         print(f"  [{Fore.YELLOW}3{Fore.CYAN}] Tin nhắn ZALO        — chăm sóc khách cũ")
+        print(f"  [{Fore.YELLOW}4{Fore.CYAN}] Bộ công cụ TƯ VẤN KHÁCH HÀNG (YAML & Xử lý từ chối) ✨")
         print(f"  [{Fore.WHITE}0{Fore.CYAN}] Thoát\n")
 
         choice = input(Fore.WHITE + "  Chọn: ").strip()
@@ -308,6 +309,13 @@ def main():
             menu_facebook()
         elif choice == "3":
             menu_zalo()
+        elif choice == "4":
+            try:
+                from consultation.cli import display_interactive_cli
+                display_interactive_cli()
+            except Exception as e:
+                print(f"Lỗi khởi chạy bộ công cụ tư vấn: {e}")
+                input("\n  Nhấn Enter để quay lại...")
         elif choice == "0":
             print("Chúc sale thành công! 💪")
             break

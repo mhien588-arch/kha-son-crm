@@ -1,0 +1,165 @@
+# Cơ sở dữ liệu Kịch bản tư vấn thực chiến - Kha Sơn Green Home
+# placeholders hỗ trợ: {du_an}, {hotline}, {khu_vuc}, {gia_tu}, {dien_tich}, {phap_ly}, {ten_sale}
+
+- topic: "📞 Telesale Gọi Lần Đầu (30s)"
+  items:
+    - name: "Kịch bản A: Khơi gợi nhu cầu (Đầu tư cạnh KCN)"
+      content: |
+        ━━━ KHƠI GỢI NHU CẦU ĐẦU TƯ CẠNH KCN ━━━
+        
+        🗣️ **SALE:** "Alo! Dạ em chào anh/chị [Tên] ạ. Em là {ten_sale} bên văn phòng quản lý dự án {du_an} đây ạ!"
+        👤 **KHÁCH:** "(Xác nhận hoặc hỏi có việc gì không)"
+        
+        🗣️ **SALE:** "Dạ, em gọi vì trước đây anh/chị có quan tâm tìm hiểu đất nền khu vực {khu_vuc} để đầu tư. Không biết hiện tại anh/chị còn đang theo dõi thị trường khu vực này không ạ?"
+        👤 **KHÁCH:** "Anh vẫn đang xem, nhưng chưa thấy khu nào ưng ý..."
+        
+        🗣️ **SALE:** "Dạ tuyệt vời quá ạ! Đúng lúc bên em đang ra đợt hàng đặc biệt cuối tuần này — diện tích {dien_tich}, giá cực mềm {gia_tu}, đặc biệt là {phap_ly}. Nằm ngay sát vách KCN Phú Bình đang xây dựng hạ tầng rất mạnh.
+        Cuối tuần này bên em có xe đưa đón tận nhà cho khách đi xem thực địa dự án và hạ tầng xung quanh hoàn toàn miễn phí. Em xếp cho anh/chị 1 ghế VIP đi xem thử vào sáng Thứ Bảy hay Chủ Nhật tiện hơn cho mình ạ?"
+        
+        📌 **MỤC TIÊU:** Đặt lịch hẹn đi xem đất thực tế. KHÔNG cố chốt giá hay bán hàng qua điện thoại!
+        📞 **Hotline hỗ trợ nhanh:** {hotline}
+
+    - name: "Kịch bản B: Tạo độ khẩn cấp (Hết hàng / Nền đẹp)"
+      content: |
+        ━━━ TẠO ĐỘ KHẨN CẤP / KHAN HIẾM ━━━
+        
+        🗣️ **SALE:** "Alo, em chào anh/chị [Tên] ạ! Em là {ten_sale} bên dự án {du_an}. Em xin phép báo nhanh cho anh/chị một tin cực kỳ quan trọng được không ạ?"
+        👤 **KHÁCH:** "Tin gì em ơi?"
+        
+        🗣️ **SALE:** "Dạ, anh/chị nằm trong danh sách khách hàng VIP đã quan tâm dự án bên em từ trước. Em muốn báo là phân khu đẹp nhất giáp mặt đường KCN vừa ra bảng hàng sáng nay, mà hiện tại đã có khách đặt cọc giữ chỗ mất 4 nền rồi ạ. 
+        Hiện tại chỉ còn đúng 2 nền vị trí cực đẹp hướng Đông Nam, diện tích {dien_tich}, sổ đỏ trao tay. Em nhớ anh/chị thích vị trí thoáng nên gọi ngay để ưu tiên giữ quyền xem trước cho anh/chị."
+        👤 **KHÁCH:** "Giá cả thế nào em?"
+        
+        🗣️ **SALE:** "Dạ giá đợt này vẫn áp dụng giá gốc {gia_tu}. Để đảm bảo anh/chị không bỏ lỡ cơ hội tốt này, chiều nay hoặc sáng mai em mang đầy đủ sơ đồ phân lô, bảng giá và sổ đỏ bản gốc qua cơ quan hoặc nhà riêng gửi anh/chị xem trước được không ạ?"
+        
+        📌 **MỤC TIÊU:** Gặp trực tiếp để trình bày sơ đồ hoặc chốt lịch xem đất ngay lập tức.
+        📞 **Hotline:** {hotline}
+
+    - name: "Kịch bản C: Tiếp cận hướng tích sản"
+      content: |
+        ━━━ KỊCH BẢN ĐẦU TƯ TÍCH SẢN LÂU DÀI ━━━
+        
+        🗣️ **SALE:** "Em chào anh/chị [Tên]! Em là {ten_sale} từ {du_an} đây ạ. Anh/chị [Tên] ơi, không biết trong năm nay mình đã có kế hoạch đầu tư tích sản bất động sản dòng tiền ở khu vực nào chưa ạ?"
+        👤 **KHÁCH:** "Năm nay kinh tế khó khăn, anh đang gửi tiết kiệm thôi em."
+        
+        🗣️ **SALE:** "Dạ em hiểu mà, giai đoạn này gửi tiết kiệm là an toàn nhưng lãi suất hiện nay khá thấp. Nhiều khách hàng bên em đã chọn chuyển một phần dòng tiền sang đất nền giáp KCN lớn vì đây là kênh giữ tiền chống lạm phát tốt nhất.
+        Dự án {du_an} bên em nằm ngay {khu_vuc}, giá {gia_tu} cho một nền {dien_tich}, mà có {phap_ly}. KCN Phú Bình chuẩn bị đi vào hoạt động với hơn 50.000 công nhân, tiềm năng xây phòng trọ hoặc cho thuê kinh doanh sinh lời ngay cực kỳ cao.
+        Em gửi anh/chị cuốn tài liệu phân tích bài toán dòng tiền này qua Zalo để mình tham khảo thêm nhé. Số Zalo này của anh/chị luôn đúng không ạ?"
+        
+        📌 **MỤC TIÊU:** Kết nối kết bạn Zalo, gửi tài liệu nghiên cứu và chăm sóc tiếp.
+        📞 **Hotline:** {hotline}
+
+- topic: "💬 Nhắn Tin Zalo Chăm Sóc"
+  items:
+    - name: "Zalo A: Chăm sóc sau khi đi xem thực địa"
+      content: |
+        Chào anh/chị [Tên] ạ! 🌹
+        Em là {ten_sale} bên dự án {du_an} đây ạ.
+        
+        Lời đầu tiên em xin cảm ơn anh/chị rất nhiều vì đã dành thời gian quý báu cuối tuần cùng em đi xem thực tế khu đất tại {khu_vuc}. 
+        
+        Không biết sau khi tận mắt quan sát hạ tầng và vị trí nền đất {dien_tich} hôm trước, anh/chị có thêm băn khoăn hay câu hỏi nào về pháp lý hoặc chính sách thanh toán không ạ? Em luôn sẵn sàng giải đáp và hỗ trợ anh/chị tối đa.
+        
+        Nếu anh/chị muốn xem lại bản vẽ phân lô chi tiết hay cần tính toán dòng tiền đầu tư, cứ nhắn em nhé! Chúc anh/chị một ngày làm việc hiệu quả và nhiều niềm vui! 🙏😊
+
+    - name: "Zalo B: Cập nhật tiến độ hạ tầng mới"
+      content: |
+        Chào anh/chị [Tên]! 🏡
+        Em {ten_sale} dự án {du_an} đây ạ. Em gửi anh/chị cập nhật tiến độ mới nhất của dự án tuần này:
+        
+        🏗️ Bên em vừa hoàn thiện trải nhựa toàn bộ trục đường nội khu rộng 12m và lắp đặt xong hệ thống đèn chiếu sáng đô thị. Cảnh quan toàn khu lên cực kỳ sáng và đẹp rồi anh/chị ạ!
+        
+        Kèm theo đó, tiến độ thi công nhà xưởng của KCN Phú Bình sát cạnh cũng đang đẩy mạnh ngày đêm, lượng kỹ sư và công nhân bắt đầu đổ về rất đông. Đây là thời điểm vàng để sở hữu trước khi hạ tầng hoàn thiện 100% và giá tăng vọt.
+        
+        Em gửi kèm dưới đây một vài hình ảnh thực tế ghi nhận tại công trường sáng nay để anh/chị tham khảo nha. Anh/chị cần thêm thông tin gì cứ ới em nhé! 📸👇
+
+    - name: "Zalo C: Tạo độ khẩn cấp (Sắp tăng giá)"
+      content: |
+        Anh/chị [Tên] ơi! Em {ten_sale} đây ạ. 🌟
+        
+        Em muốn báo trước với anh/chị một thông tin nội bộ cực kỳ quan trọng: Từ ngày 01 tháng sau, chủ đầu tư dự án {du_an} sẽ chính thức điều chỉnh tăng giá bán từ 5% - 7% cho tất cả các lô còn lại do hạ tầng đường điện nước đã nghiệm thu hoàn tất.
+        
+        Hiện tại em vẫn giữ được quyền ưu tiên 1 lô góc ngoại giao cực đẹp với mức giá cũ là {gia_tu}. Lô này {dien_tich}, cực kỳ hợp phong thủy và giáp mặt vườn hoa.
+        
+        Em báo để anh/chị cân đối sớm. Nếu anh/chị ưng ý lô này, em hỗ trợ làm thủ tục giữ chỗ ngay hôm nay để khóa giá tốt nhất cho mình nhé ạ. Tránh để sang tháng sau mua bị chênh mất mấy chục triệu rất tiếc ạ! 🙏
+
+- topic: "⚡ Xử Lý Từ Chối Thực Chiến"
+  items:
+    - name: "Tình huống 1: Khách chê giá đắt / cao"
+      content: |
+        ━━━ TÌNH HUỐNG CHÊ GIÁ ĐẮT ━━━
+        
+        👤 **KHÁCH:** "Đất ở đây giá {gia_tu} là đắt quá em ơi, xung quanh dân bán có một nửa thôi!"
+        
+        🗣️ **SALE:** "Dạ em hiểu cảm giác của anh/chị khi mới nghe qua mức giá. Nhưng anh/chị ơi, tiền nào của nấy ạ. Đất dân xung quanh giá rẻ hơn nhưng thường nằm trong ngõ sâu, đường đất nhỏ hẹp xe hơi không vào được, và đặc biệt là không có quy hoạch hạ tầng đồng bộ.
+        
+        Còn tại {du_an}, giá {gia_tu} anh/chị nhận được:
+        1. Đất mặt tiền đường nhựa rộng 12m, vỉa hè cây xanh đô thị hoàn chỉnh.
+        2. Sát sườn KCN Phú Bình quy hoạch cực lớn, sau này xây nhà trọ hay mở quán ăn cho công nhân cực dễ.
+        3. {phap_ly} - có ngân hàng bảo lãnh cho vay tới 70% giá trị đất.
+        
+        Tính ra mua ở đây cực kỳ an toàn và có tính thanh khoản cao, dễ bán lại hơn đất dân rất nhiều. Anh/chị thấy bài toán đầu tư hạ tầng đồng bộ như vậy có xứng đáng không ạ?"
+
+    - name: "Tình huống 2: Lo ngại pháp lý / sổ đỏ"
+      content: |
+        ━━━ TÌNH HUỐNG LO NGẠI PHÁP LÝ ━━━
+        
+        👤 **KHÁCH:** "Đất dự án bây giờ sợ lắm, nhỡ không ra được sổ thì mất trắng à?"
+        
+        🗣️ **SALE:** "Dạ em rất đồng cảm với sự cẩn trọng của anh/chị. Mua bán bất động sản tài sản lớn thì pháp lý phải đặt lên hàng đầu ạ. Bản thân em đi bán hàng cũng chỉ dám bán những dự án pháp lý chuẩn chỉ để giữ uy tín thôi.
+        
+        Em xin cam kết với anh/chị luôn là dự án {du_an} đã hoàn thành 100% nghĩa vụ thuế với nhà nước, có quy hoạch 1/500 chi tiết và đặc biệt là **{phap_ly}**.
+        
+        Để anh/chị hoàn toàn yên tâm, ngay bây giờ em xin phép gửi bản sao sổ đỏ gốc của phân khu và quyết định giao đất qua Zalo để anh/chị tự kiểm tra trước. Khi đi xem đất, em sẽ mang theo sổ đỏ công chứng để anh/chị tận mắt đối chiếu luôn ạ!"
+
+    - name: "Tình huống 3: Chê vị trí xa trung tâm"
+      content: |
+        ━━━ TÌNH HUỐNG CHÊ VỊ TRÍ XA ━━━
+        
+        👤 **KHÁCH:** "Khu này xa quá em ơi, từ Hà Nội chạy lên Thái Nguyên mất cả tiếng đồng hồ đi lại bất tiện."
+        
+        🗣️ **SALE:** "Dạ đúng là nếu so với việc đi lại hàng ngày từ Hà Nội thì xa thật ạ. Nhưng anh/chị ơi, mình đang mua đất đầu tư sinh lời chứ không phải đất để ở đi làm hàng ngày ở thủ đô đúng không anh/chị?
+        
+        Trong đầu tư, đất càng trung tâm thì giá đã quá cao (vài chục đến cả trăm triệu/m2) và biên độ tăng giá không còn nhiều. Ngược lại, đất tại {khu_vuc} chỉ từ {gia_tu}, nằm ngay lõi khu công nghiệp đang phát triển.
+        
+        Thời gian chạy từ Hà Nội lên qua cao tốc chỉ mất đúng 30-40 phút, giao thông cực kỳ thông thoáng. Khi KCN đi vào hoạt động, giá trị đất sẽ tăng theo hạ tầng chứ không phụ thuộc khoảng cách địa lý. Đầu tư ở đây giống như việc đón đầu làn sóng bất động sản công nghiệp vậy ạ!"
+
+    - name: "Tình huống 4: Khách bảo cần suy nghĩ thêm"
+      content: |
+        ━━━ TÌNH HUỐNG 'ĐỂ ANH SUY NGHĨ THÊM' ━━━
+        
+        👤 **KHÁCH:** "Được rồi để anh về suy nghĩ thêm rồi có gì anh gọi lại sau nhé."
+        
+        🗣️ **SALE:** "Dạ vâng, việc đầu tư đất nền là chuyện lớn nên anh/chị cần suy nghĩ và bàn bạc kỹ là hoàn toàn đúng đắn ạ.
+        
+        Tuy nhiên, không biết anh/chị đang cần cân nhắc thêm về vấn đề tài chính, giá cả hay còn chút băn khoăn nào về pháp lý dự án mà em chưa giải thích rõ ràng không ạ? Em ở đây là để cung cấp đầy đủ thông tin nhất giúp anh/chị đưa ra quyết định chính xác.
+        
+        Nếu được, anh/chị cứ chia sẻ thật lòng với em vướng mắc lớn nhất hiện tại là gì, em sẽ tư vấn phương án giải quyết tối ưu nhất cho mình ạ."
+
+- topic: "📋 Quy Trình Tư Vấn Chuẩn"
+  items:
+    - name: "Quy trình 4 Bước Tư Vấn Thực Chiến"
+      content: |
+        ━━━ QUY TRÌNH 4 BƯỚC CHINH PHỤC KHÁCH HÀNG ━━━
+        
+        📌 **BƯỚC 1: TIẾP CẬN & GÂY ẤN TƯỢNG (30 GIÂY ĐẦU)**
+        - **Mục tiêu:** Khách không cúp máy, giọng nói hào hứng, rõ ràng, xưng hô tôn trọng.
+        - **Kỹ thuật:** Đi thẳng vào giá trị cốt lõi (Đất nền sát KCN lớn, sổ đỏ trao tay, giá chỉ {gia_tu}).
+        
+        📌 **BƯỚC 2: KHAI THÁC NHU CẦU & NỖI ĐAU**
+        - Hỏi những câu hỏi mở để khách tự chia sẻ:
+          * "Không biết anh/chị đầu tư ngắn hạn đón sóng hay tích sản lâu dài lấy dòng tiền ạ?"
+          * "Trước đây anh/chị đã từng đầu tư đất nền ven khu công nghiệp bao giờ chưa?"
+        - Lắng nghe 80%, nói 20%. Ghi chép lại các thông tin: Tài chính tối đa, lo ngại pháp lý, khu vực ưu thích.
+        
+        📌 **BƯỚC 3: ĐƯA RA GIẢI PHÁP ĐO NI ĐÓNG GIÀY**
+        - Chọn sản phẩm phù hợp nhất với nhu cầu đã khai thác:
+          * Khách tài chính mỏng ➔ Giới thiệu lô diện tích vừa phải, hướng dẫn bài toán đòn bẩy ngân hàng.
+          * Khách thích an toàn ➔ Nhấn mạnh {phap_ly}, có sổ đỏ từng lô.
+          * Khách muốn kinh doanh ngay ➔ Giới thiệu lô sát cổng KCN, trục chính 12m.
+        
+        📌 **BƯỚC 4: THIẾT LẬP CUỘC HẸN XEM ĐẤT (KHÓA HẸN)**
+        - KHÔNG cố gắng bán hàng hay chốt cọc qua điện thoại.
+        - Sử dụng câu hỏi đóng lựa chọn 2-chọn-1:
+          * "Cuối tuần này bên em có xe 7 chỗ đưa đón anh/chị từ nhà đi xem thực địa. Em đón anh/chị lúc 8h sáng Thứ Bảy hay 2h chiều Chủ Nhật tiện hơn ạ?"
+        - Nhắc hẹn trước 1 ngày và trước giờ đi 2 tiếng để đảm bảo khách không quên lịch.

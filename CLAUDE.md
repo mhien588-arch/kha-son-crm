@@ -1,5 +1,5 @@
 # HỆ THỐNG VẬN HÀNH — KHA SƠN GREEN HOME
-> Dự án: Đất nền KCN Phú Bình, Thái Nguyên | Cập nhật: 20/05/2026 (phiên 23)
+> Dự án: Đất nền KCN Phú Bình, Thái Nguyên | Cập nhật: 21/05/2026 (phiên 24)
 
 ---
 
@@ -11,10 +11,10 @@
 |---|-----|---------|----------------|
 | 1 | Hiển | Sale Leader | Dẫn dắt team, chốt deal lớn, báo cáo BGĐ |
 | 2 | Đức | Sale Senior | Chăm sóc leads nóng, đưa khách đi xem đất |
-| 3 | Sơn | Sale Senior | Chăm sóc leads nóng, đưa khách đi xem đất |
+| 3 | Chị Dung | Sale Senior | Chăm sóc leads nóng, telesale cold-call |
 | 4 | Tuấn Anh | Sale Junior | Tìm kiếm leads mới, chăm sóc leads lạnh |
 | 5 | Nam | Sale Junior | Tìm kiếm leads mới, hỗ trợ content FB/Zalo |
-| 6 | Tiến | Sale Junior | Tìm kiếm leads mới, hỗ trợ content FB/Zalo |
+| 6 | Chương | Sale Junior | Tìm kiếm leads mới, telesale cold-call |
 
 > Thêm/bớt thành viên: dùng **menu [7] trong tracker.py** → [a] Thêm / [c] Vô hiệu hóa → tự động cập nhật `config.json` (không cần sửa code)
 
@@ -28,13 +28,14 @@
 
 ---
 
-## TRẠNG THÁI SCRIPTS — CẬP NHẬT 20/05/2026 (phiên 22)
+## TRẠNG THÁI SCRIPTS — CẬP NHẬT 21/05/2026 (phiên 25)
 
 | Script | Trạng thái | Nguồn dữ liệu |
 |--------|-----------|---------------|
 | **config.json** | ✅ **Phiên 16** — thêm `nurture_days: 14` — ngưỡng ngày nhắc giữ tương tác khách "Không còn nhu cầu" | — |
-| tracker.py | ✅ **Phiên 19** — fix bug row-index: `cap_nhat_trang_thai()` và `chuyen_leads_giua_sale()` dùng sheet-row thực tế (không còn `pidx + 2`) | **Google Sheets** + config.json |
-| sheets_connector.py | ✅ **Phiên 23** — thêm `_get_credentials()` hỗ trợ Streamlit Secrets (cloud) + fallback file local (máy tính); **Phiên 22**: `@retry_api_call` Exponential Backoff + `backup_to_csv()` | Google Sheets API |
+| **Google Sheets CRM** | ✅ **Phiên 26** — 75 leads (khôi phục 11 leads bị mất do bug `append_row()`) | — |
+| tracker.py | ✅ **Phiên 24** — thêm `_show_telesale_banner()` + menu `[T]` Xử lý DATA TELESALE (transfer leads đã tích ✓ vào CRM); **Phiên 19**: fix bug row-index | **Google Sheets** + config.json |
+| sheets_connector.py | ✅ **Phiên 26** — Fix 6 bug nghiêm trọng: `append_row()` `if v` filter gây ghi đè dữ liệu; `load_data()` + `load_telesale_data()` filter cả 2 cột; `transfer_telesale_checked()` tách retry; batch write telesale; expand tab 1500 rows; **Phiên 24**: 4 hàm TELESALE; **Phiên 23**: `_get_credentials()` | Google Sheets API |
 | daily_report.py | ✅ **Phiên 22** — tự động gọi `backup_to_csv()` ngay khi khởi chạy báo cáo | **Google Sheets** + config.json |
 | weekly_report.py | ✅ **Tạo mới phiên 11** — Báo cáo tuần + phân tích nguồn lead → `bao_cao_tuan_W{N}_2026.txt` | **Google Sheets** + config.json |
 | Bao Cao Tuan.bat | ✅ **Tạo mới phiên 11** — double-click để chạy weekly_report.py | — |
@@ -43,8 +44,12 @@
 | Nhac Sang.bat | ✅ **Tạo mới phiên 12** — double-click để test nhac_sang.py thủ công | — |
 | cleanup_reports.py | ✅ **Tạo mới phiên 12** — zip báo cáo tháng cũ vào archive/, giữ tháng hiện tại | — |
 | Don Dep Bao Cao.bat | ✅ **Tạo mới phiên 12** — double-click để chạy cleanup_reports.py | — |
-| dashboard.py | ✅ **Phiên 23** — đổi `page_title="CRM BKD2"` (tên icon màn hình điện thoại); **Phiên 22**: Web Dashboard CRM chuẩn Navy (biểu đồ Plotly, bộ lọc thông minh, chỉnh sửa thời gian thực, Staging, Nhập lead số lượng lớn chống trùng, định dạng SĐT `0982 287 863` và bộ quét `clean_html`) | **Google Sheets** + config.json |
+| dashboard.py | ✅ **Phiên 25** — thêm Tab "💡 Kịch Bản Tư Vấn" (dropdown lọc theo Sale và mẫu kịch bản, render trực quan, copy 1 chạm); **Phiên 24**: tab Data Telesale | **Google Sheets** + config.json |
+| content_helper.py | ✅ **Phiên 25** — bổ sung tùy chọn `[4]` liên kết khởi chạy Bộ kịch bản tư vấn mới ngay trong menu console | **config.json** + consultation |
+| consultation/ | ✅ **Tạo mới phiên 25** — gói quản lý kịch bản mẫu câu độc lập (templates.yaml, loader.py, cli.py) | templates.yaml |
+| Tư Vấn Mẫu Câu.bat | ✅ **Tạo mới phiên 25** — phím tắt chạy nhanh CLI kịch bản tư vấn dạng tương tác trên Windows | — |
 | Mo Dashboard.bat | ✅ **Tạo mới phiên 22** — chạy Streamlit trên môi trường python3.13 | — |
+| Viet Content.bat | ✅ **Phiên 25** — chạy content_helper.py và hỗ trợ gọi nhanh bộ kịch bản tư vấn | — |
 | C:\Users\PC\Desktop\Mo CRM Kha Son.bat | ✅ **Tạo mới phiên 22** — Launcher thông minh ngoài Desktop, kiểm tra xung đột cổng, khởi động/mở trình duyệt nhanh | — |
 | **GitHub repo** | ✅ **Phiên 23** — `github.com/mhien588-arch/kha-son-crm` (public) — nguồn deploy tự động cho Streamlit Cloud | — |
 | **Streamlit Community Cloud** | ✅ **Phiên 23** — App live tại `https://kha-son-crm-k3tfrnb488ckvq4nb5xsm7.streamlit.app` — team truy cập từ điện thoại, thêm vào màn hình chính như app thật | Cloud |
@@ -91,8 +96,9 @@ pip install pandas colorama gspread google-auth
 - Sheet ID: `1syWcPK_YopGk2XtIYegDgHwnR6YPOHOoZmiN4ze-yjA`
 - **Tab 1:** `KhaSonGreenHome_CRM` — dữ liệu CRM chính, định dạng navy, User Guide I56:L90
 - **Tab 2:** `SỐ MỚI KS` — staging inbox, tạo tự động lần đầu khi chạy tracker.py (phiên 9)
+- **Tab 3:** `DATA TELESALE` — cold-call inbox, header cam #E65100, checkbox cột I, 1111 số đã import (phiên 24); tạo tự động khi chạy `ensure_telesale_tab()`
 - Credentials: `data/google_creds.json` (Service Account — KHÔNG xóa, KHÔNG chia sẻ)
-- Trạng thái hiện tại: **72 khách hàng thật (phiên 20: khôi phục 14 leads Chị Dung) — định dạng navy chuyên nghiệp, User Guide tại I56:L90**
+- Trạng thái hiện tại: **75 khách hàng CRM thật + ~1100 số DATA TELESALE — định dạng navy chuyên nghiệp** (75 sau khi phục hồi 11 leads mất do bug phiên 26)
 - Link CRM chính: https://docs.google.com/spreadsheets/d/1syWcPK_YopGk2XtIYegDgHwnR6YPOHOoZmiN4ze-yjA/edit?gid=1033447423#gid=1033447423
 
 ---
@@ -114,6 +120,7 @@ python tracker.py
 - `[7]` Quản lý team sale → `[a]` Thêm thành viên | `[c]` Vô hiệu hóa thành viên
 - `[8]` Tìm kiếm theo SĐT (hỗ trợ tìm một phần) → xem thông tin + cập nhật ngay
 - `[9]` Xử lý SỐ MỚI KS → chuyển lead đã tích ✓ vào CRM chính (auto in đậm dòng mới)
+- `[T]` Xử lý DATA TELESALE → chuyển lead đã tích ✓ từ tab "DATA TELESALE" vào CRM với trạng thái "Đang chăm sóc"
 
 **Luồng lead mới (phiên 9):**
 1. Nhập `[4]` → Validate SĐT (phải bắt đầu `0`, đủ 10 số) → Kiểm tra trùng CRM + staging
@@ -1107,16 +1114,21 @@ Tất cả tính năng vá lỗ hổng đã được triển khai và xác minh 
 - ✅ **Deploy Dashboard lên Streamlit Cloud (phiên 23)**: App live tại `https://kha-son-crm-k3tfrnb488ckvq4nb5xsm7.streamlit.app` — team truy cập từ điện thoại.
 - ✅ **Đổi tên app thành CRM BKD2 (phiên 23)**: `page_title="CRM BKD2"` trong `dashboard.py`, push lên GitHub, Streamlit Cloud auto-deploy.
 - ✅ **Hiển đã cài app vào màn hình iPhone (phiên 23)**: Dùng Safari → Share → Thêm vào màn hình chính.
-- ⏳ **Hướng dẫn 5 thành viên còn lại cài app vào màn hình điện thoại**: Đức, Sơn, Tuấn Anh, Nam, Tiến — Android dùng Chrome, iPhone dùng Safari → Share → Thêm vào màn hình chính. URL: `https://kha-son-crm-k3tfrnb488ckvq4nb5xsm7.streamlit.app`
+- ✅ **Tab DATA TELESALE (phiên 24)**: Tạo tab mới trong Sheets + Dashboard + tracker với 4 hàm sheets_connector mới; import 1125 số từ `Danh_sach_KD_chuyen_doi.md` → 1111 hàng hợp lệ, phân công đúng team theo config.json
+- ✅ **Fix phân công sai team (phiên 24)**: Lần import đầu dùng Sơn/Tiến thay vì Chị Dung/Chương → tạo script `_fix_telesale_sale.py` đọc config.json, ghi lại cột D đúng team; đã xóa script temp sau khi dùng
+- ✅ **Fix 6 bug sheets_connector.py (phiên 26)**: Đặc biệt bug `append_row()` `if v` filter gây mất dữ liệu; phục hồi 11/11 leads mất; CRM hiện 75 leads
+- ⏳ **Hướng dẫn 5 thành viên còn lại cài app vào màn hình điện thoại**: Đức, Tuấn Anh, Nam, Chị Dung, Chương — Android dùng Chrome, iPhone dùng Safari → Share → Thêm vào màn hình chính. URL: `https://kha-son-crm-k3tfrnb488ckvq4nb5xsm7.streamlit.app`
+- ⏳ **Team mở Google Sheets tab DATA TELESALE**: Mỗi sale lọc tên mình ở cột D → gọi từng số → tích ✓ cột I khi khách có nhu cầu → Hiển mở Dashboard tab 📞 hoặc nhấn [T] trong tracker để chuyển vào CRM
 - ⏳ **Kích hoạt Task Scheduler**: Chạy `setup_task_scheduler.py` với quyền Admin trên máy Hiển → đăng ký task `KhaSon_NhacNhoSang` (nhắc nhở tự động 8:00 sáng T2–T7)
-- ⏳ **In hoặc gửi file Word**: Gửi `Huong_Dan_Nhan_Su.docx` cho Nam và Tiến khi onboard; `Huong_Dan_Toan_Dien_CRM.pdf` cho Hiển tham khảo kỹ thuật
+- ⏳ **In hoặc gửi file Word**: Gửi `Huong_Dan_Nhan_Su.docx` cho Chương và Chị Dung khi onboard; `Huong_Dan_Toan_Dien_CRM.pdf` cho Hiển tham khảo kỹ thuật
+- ⏳ **Push config.json lên GitHub**: config.json hiện bị gitignore (bảo mật) — Streamlit Cloud dùng secrets.toml riêng, không cần push; nhưng khi team thay đổi cần cập nhật secrets.toml trên Streamlit Cloud portal
 - ⏳ **zalo_notify.py**: Triển khai khi có Zalo OA Access Token từ business.zalo.me
-- ⏳ **Cập nhật config khi thêm/bớt sale**: Dùng menu [7] trong tracker.py → commit `config.json` → push lên GitHub → Streamlit Cloud tự deploy lại để cloud cũng thấy team mới
+- ⚠️ **Quy tắc bất biến TELESALE tab**: Tab DATA TELESALE chỉ có 8 cột dữ liệu A:H, cột I là checkbox. `append_telesale_rows()` dùng `COLUMNS[:8]`, `load_telesale_data()` dùng `COLUMNS[:8]`. Nếu thêm cột vào COLUMNS phải kiểm tra cả staging lẫn telesale.
+- ⚠️ **KHÔNG bao giờ hardcode tên sale**: Luôn đọc từ `config.json` (lesson từ phiên 24 khi dùng Sơn/Tiến thay vì Chị Dung/Chương trong script import).
 - ⚠️ **Quy tắc bất biến staging**: Nếu thêm cột mới vào `COLUMNS` trong tương lai, phải kiểm tra lại CẢ HAI `append_staging_row()` VÀ `load_staging_data()` — cả 2 đều phải dùng `COLUMNS[:8]`
-- ⚠️ **Ghi chú lead Anh Chính (0372122972)**: Xuất hiện trong ảnh chụp nhưng không có trong danh sách 13 leads bị mất — có thể đã được chuyển đúng trước đó hoặc là lead đã tồn tại của Chị Dung. Khi kiểm tra CRM [2], nếu thấy Anh Chính trùng lặp thì xóa 1 bản.
-- ⚠️ **Quy tắc bất biến int64**: Mọi hàm truyền DataFrame index vào gspread API phải wrap bằng `int()`. DataFrame index từ pandas luôn là `numpy.int64`, không phải Python `int`. Các hàm cần check: `delete_crm_row()` (đã fix), bất kỳ hàm nào dùng `.delete_rows()` hoặc `.delete_columns()` trong tương lai.
-- ⚠️ **Quy tắc bất biến Streamlit Cloud**: Filesystem cloud không persistent → backup CSV chỉ chạy trên máy tính, không chạy trên cloud. Mọi thay đổi config vẫn phải qua tracker.py trên máy → commit → push.
-- ⚠️ **Streamlit Cloud ngủ sau 7 ngày**: Nếu không ai dùng 7 ngày, lần mở tiếp theo chậm ~30 giây. Không cần lo — tự thức dậy, không mất data.
+- ⚠️ **Quy tắc bất biến int64**: Mọi hàm truyền DataFrame index vào gspread API phải wrap bằng `int()`. DataFrame index từ pandas luôn là `numpy.int64`, không phải Python `int`.
+- ⚠️ **Quy tắc bất biến Streamlit Cloud**: Filesystem cloud không persistent → backup CSV chỉ chạy trên máy tính. Mọi thay đổi config vẫn phải qua tracker.py trên máy → commit → push.
+- ⚠️ **Streamlit Cloud ngủ sau 7 ngày**: Nếu không ai dùng 7 ngày, lần mở tiếp theo chậm ~30 giây. Tự thức dậy, không mất data.
 
 ---
 
@@ -1270,3 +1282,159 @@ Tất cả tính năng vá lỗ hổng đã được triển khai và xác minh 
 
 12. **Facebook Lead Ads tự động** — Lead Ads → Zapier/Make → Google Sheets append tự động, không cần nhập tay (~$20/tháng, khi > 50 lead/tuần)
 13. **Multi-project** — Chọn dự án khi khởi động tracker (khi có dự án BĐS thứ 2)
+
+---
+
+### Phiên 24 — 21/05/2026 — Tab DATA TELESALE & Import 1111 Số Cold-call
+
+**Vấn đề phát sinh & Yêu cầu mới:**
+- Team cần gọi điện cold-call từ danh sách số bên ngoài (không phải từ Ads Facebook)
+- Hiển cung cấp file `Danh_sach_KD_chuyen_doi.md` chứa 3 danh sách KD1/KD2/KD3 (~1173 số)
+- Cần: hệ thống phân công sale → sale gọi → tích ✓ số có nhu cầu → tự động chuyển vào CRM với trạng thái "Đang chăm sóc"
+
+**Đã hoàn thành:**
+
+**A. Tính năng DATA TELESALE — 3 file (xây dựng từ kế hoạch phiên trước)**
+
+`sheets_connector.py` — 4 hàm mới + 1 hằng số:
+- `TELESALE_TAB = "DATA TELESALE"`
+- `ensure_telesale_tab()` — tạo tab với header cam `#E65100`, freeze row 1, BOOLEAN checkbox cột I rows 2-200; tái dùng pattern `ensure_staging_tab()`
+- `append_telesale_rows(rows_list)` — ghi nhiều dòng cùng lúc; dùng `col_values(1)` tính next_row (tránh checkbox phantom), `RAW` mode giữ số 0 SĐT, chỉ ghi `COLUMNS[:8]`
+- `load_telesale_data()` — đọc A:I, filter dòng trống col A, trả DataFrame COLUMNS[:8] + sheet_row_indices
+- `transfer_telesale_checked()` — tìm col I == "TRUE" → append CRM với "Đang chăm sóc" + today date → highlight_new_row() → xóa ngược thứ tự từ telesale
+
+`dashboard.py` — tab "📞 Data Telesale" (thứ 4 trong menu):
+- Section A: nhập số mới (text_area, validate SĐT, lọc trùng 3 cấp: lô + CRM + telesale, preview bảng, chọn sale)
+- Section B: danh sách đang chờ + button "Chuyển leads đã tích ✓ vào CRM"
+
+`tracker.py` — tích hợp telesale:
+- `_show_telesale_banner()` — banner magenta "📞 DATA TELESALE: X số chờ gọi" ở startup
+- `xu_ly_data_telesale()` — menu `[T]`: gọi `transfer_telesale_checked()`, in tên đã chuyển, reload df
+
+**B. Import 1125 số từ `Danh_sach_KD_chuyen_doi.md`**
+- Parse 3 danh sách KD1/KD2/KD3 từ file markdown (pipe-delimited table)
+- Chuẩn hóa SĐT: extract digits → strip prefix 84 → pad 9-digit → validate 10-digit bắt đầu 0
+- Lọc trùng 3 cấp: 27 số trùng trong lô, 2 số trùng CRM → còn 1125 số hợp lệ
+- Phân công round-robin cho 5 sale (trừ Hiển)
+- Batch write 100 dòng/lần + delay 2 giây → tránh API 429
+- Tab tự resize từ 200 → 1175 rows để chứa đủ dữ liệu
+
+**C. Fix lỗi phân công sai — script `_fix_telesale_sale.py` (đã xóa)**
+- Lỗi: script import dùng `SALE_TEAM = ["Đức", "Sơn", "Tuấn Anh", "Nam", "Tiến"]` hardcode — Sơn và Tiến không còn trong team (config.json có Chị Dung và Chương)
+- Fix: đọc `config.json`, lọc Hiển → `['Đức', 'Tuấn Anh', 'Nam', 'Chị Dung', 'Chương']`
+- Đọc lại 1111 dòng có tên trong col A (1125 - 14 dòng chỉ có SĐT không tên)
+- Ghi lại cột D toàn bộ trong 3 batch 500 dòng
+- **Kết quả cuối: Đức:223 / Tuấn Anh:222 / Nam:222 / Chị Dung:222 / Chương:222**
+
+**Lỗi phát sinh và cách xử lý:**
+
+| Lỗi | Nguyên nhân | Cách fix |
+|-----|------------|----------|
+| Phân công sai Sơn/Tiến thay vì Chị Dung/Chương | Script import hardcode tên sale, không đọc config.json | Tạo `_fix_telesale_sale.py` đọc config.json, ghi lại cột D |
+| `UnicodeEncodeError` khi chạy Python trong Bash/PowerShell | Terminal mặc định CP1252 | Dùng `$env:PYTHONIOENCODING = "utf-8"` trước lệnh python |
+
+**Quyết định kiến trúc phiên 24:**
+
+| Quyết định | Lý do |
+|-----------|-------|
+| **LUÔN đọc sale_team từ config.json** (không hardcode) | Lesson học xương máu: hardcode tên sale dẫn đến phân công sai toàn bộ; config.json là nguồn duy nhất cho team |
+| `col_values(1)` đếm next_row cho telesale | Tái dùng pattern phiên 10 — checkbox BOOLEAN cột I tạo phantom rows nếu dùng `append_rows()` |
+| `COLUMNS[:8]` cho telesale | Tab DATA TELESALE có cấu trúc giống staging: 8 cột data, cột I là checkbox; nhất quán với `append_staging_row()` |
+| Header cam `#E65100` cho DATA TELESALE | Phân biệt rõ: CRM navy `#0D47A1`, staging vàng `#FFF9C4`, telesale cam `#E65100` |
+| Batch 100 rows + delay 2s khi import hàng nghìn dòng | Google Sheets API có quota 300 requests/60s; batch nhỏ + delay tránh 429 RESOURCE_EXHAUSTED |
+| Xóa script temp sau khi dùng | `_import_telesale_kd.py` và `_fix_telesale_sale.py` là one-time use; giữ lại làm rác repo |
+
+**Quy tắc bất biến sau phiên 24:**
+> `DATA TELESALE` tab có cấu trúc tương tự `SỐ MỚI KS`: 8 cột data (A:H), cột I là checkbox (✓ Chuyển CRM). Tất cả hàm đọc/ghi đều dùng `COLUMNS[:8]`. Khi thêm cột mới vào `COLUMNS`, kiểm tra ĐỦ 3 chỗ: `append_staging_row()`, `load_staging_data()`, `append_telesale_rows()`, `load_telesale_data()`.
+> KHÔNG bao giờ hardcode tên sale trong script — luôn đọc `config.json`.
+
+### Phiên 25 — 21/05/2026 — Bộ công cụ Hỗ trợ Tư vấn Khách hàng (Tích hợp YAML, CLI & Streamlit)
+
+**A. Thiết kế Gói `consultation/` Độc Lập**
+- `templates.yaml` — 4 nhóm chủ đề thực chiến đầy đủ:
+  - Telesale gọi lần đầu: A (Khơi gợi), B (Tạo khan hiếm), C (Tích sản).
+  - Nhắn tin Zalo: A (Sau khi xem đất), B (Tiến độ hạ tầng), C (Sắp tăng giá).
+  - Xử lý từ chối đối thoại ngắn "Khách nói -> Sale đáp" (Chê đắt, Lo pháp lý, Chê xa, Suy nghĩ thêm).
+  - Quy trình 4 bước chinh phục khách hàng thực chiến.
+- `loader.py` — đọc YAML và nạp `project` config từ `config.json`. Thế placeholders ({du_an}, {hotline}, v.v.) và tự động cá nhân hóa `{ten_sale}`. Có sử dụng bộ nhớ đệm `@lru_cache(maxsize=1)` tối ưu hóa đọc đĩa.
+- `cli.py` — console CLI tương tác cực đẹp bằng colorama, hỗ trợ chạy nhanh qua phím tắt hoặc tham số dòng lệnh.
+
+**B. Tích Hợp Web Dashboard Streamlit (`dashboard.py`)**
+- Tab "💡 Kịch Bản Tư Vấn" (thứ 6 trong menu Sidebar).
+- Layout 2 cột: Cột trái thiết lập (Chọn Sale hoạt động, Chọn chủ đề, Chọn kịch bản mẫu); Cột phải hiển thị kết quả.
+- Tự động lấy tên Sale đã chọn điền vào `{ten_sale}` trong mẫu kịch bản.
+- Render trực quan dạng Markdown trong thẻ `.premium-card` màu Navy sang trọng.
+- Tích hợp hộp `st.code` sao chép nhanh kịch bản 1 chạm (One-click copy).
+
+**C. Liên Kết Hệ Thống & Shortcut Bat**
+- Thêm Lựa chọn `[4]` vào `content_helper.py` để kết nối trực tiếp đến CLI tư vấn.
+- Tạo `Tư Vấn Mẫu Câu.bat` trên Windows chạy siêu tốc CLI với thiết lập mã hóa UTF-8 chống lỗi font.
+- Cập nhật `Viet Content.bat` với bảng mã UTF-8 nhất quán.
+
+**Lỗi phát sinh và cách xử lý:**
+
+| Lỗi | Nguyên nhân | Cách fix |
+|-----|------------|----------|
+| `ModuleNotFoundError: No module named 'yaml'` | Thiếu thư viện PyYAML trong môi trường chạy | Chạy lệnh `pip install pyyaml` cho cả Python 3.13 và 3.14. Thêm `pyyaml` vào `requirements.txt`. |
+| `UnicodeEncodeError` khi in emoji trong topic name | Python in unicode ra Terminal CP1252 của Windows | Gán env `set PYTHONIOENCODING=utf-8` trong file BAT và hướng dẫn người dùng. |
+
+**Quyết định kiến trúc phiên 25:**
+
+| Quyết định | Lý do |
+|-----------|-------|
+| Lưu kịch bản trong file YAML tách biệt | Dễ bảo trì, quản trị viên có thể tự thêm bớt kịch bản trong templates.yaml mà không cần biết lập trình Python. |
+| Dùng `st.code` làm hộp copy | Tính năng copy gốc của Streamlit vô cùng ổn định, hỗ trợ đa nền tảng tốt hơn JS hack. |
+| Cá nhân hóa dựa trên `sale_team` đã cấu hình | Đảm bảo nhanh gọn, đồng bộ thông tin và tránh lỗi gõ sai tên Sale. |
+
+---
+
+### Phiên 26 — 21/05/2026 — Fix 6 Bug sheets_connector.py & Phục Hồi 11 Leads Mất
+
+**Vấn đề phát sinh sau phiên 25:**
+- Sau khi team tích ✓ 10 số trong DATA TELESALE và chạy transfer: CRM giảm từ 65 → 64 (mất 1), chỉ 1/10 leads telesale thực sự vào CRM (Nhiên Kiệt 0983863869)
+- 2 leads CRM gốc bị mất: thạch thảo (0374693102, Chị Dung) và Bích Hân (0975504447, Tuấn Anh)
+- 9/10 leads telesale (Đức) bị xóa khỏi telesale nhưng không vào được CRM
+
+**Nguyên nhân gốc — Bug `append_row()` (CRITICAL):**
+- `next_row = len([v for v in ws.col_values(1) if v]) + 1` — filter `if v` bỏ qua gap rows (hàng có cột A trống trong vùng data)
+- CRM có 1 hàng gap (ở giữa, không phải cuối) → undercount 1 → `next_row` trỏ vào hàng đã có data
+- Cả 10 lần `append_row()` trong transfer đều ghi vào cùng 1 row (row 67) → ghi đè nhau + ghi đè lead gốc
+- Kết quả: thạch thảo và Bích Hân mất; 9/10 telesale leads mất; chỉ Nhiên Kiệt (ghi cuối cùng) còn lại
+
+**Đã hoàn thành — 6 Fix trong sheets_connector.py:**
+
+| Fix | Hàm | Thay đổi |
+|-----|-----|---------|
+| **1 (CRITICAL)** | `append_row()` | Đổi `len([v for v in col_values(1) if v])` → `len(col_values(1))` — KHÔNG filter `if v`, tính đủ kể cả gaps |
+| 2 | `load_data()` | Đổi filter chỉ cột A → cả A lẫn B: skip chỉ khi CẢ HAI trống; lead không có tên nhưng có SĐT vẫn được tải |
+| 3 | `load_telesale_data()` | Đổi filter chỉ cột A → cả A lẫn B (14 rows import không tên bị ẩn khỏi dashboard) |
+| 4 | `append_telesale_rows()` | Thêm batch writes 50 dòng + 1s delay để tránh API 429 |
+| 5 | `transfer_telesale_checked()` | Xóa `@retry_api_call` cấp function — nếu delete phase 429 và retry, `append_row` chạy lại → duplicate CRM; thêm helper `_delete_ws_row()` có retry riêng |
+| 6 | `ensure_telesale_tab()` | Tạo tab mới với 1500 rows (không phải 200) + checkbox toàn range rows 2-1500 |
+
+**Phục hồi dữ liệu:**
+- 2 leads CRM từ backup `crm_backup_2026-05-21.csv`: thạch thảo (Chị Dung) + Bích Hân (Tuấn Anh)
+- 9 leads telesale (Đức): ghép tên theo thứ tự task output với SĐTs từ kiểm tra telesale tab; phân công Đức, Trạng thái "Đang chăm sóc"
+- 1 lead không tên (0986679891): cập nhật tên placeholder "(Không rõ tên)" trong col A để `load_data()` không bỏ qua
+- **Kết quả: CRM 64 → 75 leads; tất cả 11/11 leads phục hồi thành công**
+
+**Lỗi phát sinh và cách xử lý:**
+
+| Lỗi | Nguyên nhân | Cách fix |
+|-----|------------|----------|
+| CRM -1 lead sau transfer 10 rows | `append_row()` `if v` filter gây ghi đè data — phát hiện nhờ so sánh backup vs current | Fix 1: bỏ filter `if v` trong `col_values(1)` |
+| 14 rows telesale ẩn khỏi dashboard | `load_telesale_data()` filter chỉ col A → bỏ qua rows có SĐT nhưng không tên | Fix 3: filter cả 2 cột |
+| Potential duplicate CRM khi transfer bị 429 | `@retry_api_call` ở toàn hàm `transfer_telesale_checked()` → retry = append lại | Fix 5: tách retry xuống từng thao tác |
+
+**Quyết định kiến trúc phiên 26:**
+
+| Quyết định | Lý do |
+|-----------|-------|
+| `len(col_values(1))` KHÔNG filter | `col_values(1)` đã xử lý trailing empty cells — chỉ trả về đến row cuối có data; filter `if v` nguy hiểm khi có gap row ở giữa |
+| Backup CSV trước mỗi transfer quan trọng | `backup_to_csv()` đã có từ phiên 22, phiên 26 xác nhận backup cứu data sau sự cố |
+| Placeholder "(Không rõ tên)" cho lead tên trống | `load_data()` không bỏ qua lead này; sale có thể nhận ra và cập nhật tên đúng sau |
+| Script phục hồi one-shot, xóa sau khi dùng | Pattern nhất quán từ phiên 24: script temp đặt tên `_tên.py`, xóa sau khi dùng xong |
+
+**Quy tắc bất biến sau phiên 26:**
+> **KHÔNG BAO GIỜ dùng `if v` filter khi gọi `col_values()` để tính `next_row`.** `col_values()` đã dừng ở row cuối có data; filter `if v` bỏ qua gap row ở giữa → undercount → ghi đè data hiện có. Luôn dùng `len(ws.col_values(N)) + 1` (không filter). Hiện áp dụng đúng ở: `append_row()`, `append_staging_row()`, `append_telesale_rows()`.
+

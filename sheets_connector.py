@@ -55,6 +55,8 @@ COLUMNS = [
 STAGING_TAB = "SỐ MỚI KS"
 STAGING_COLS = COLUMNS + ["✓ Đã xử lý"]
 
+TELESALE_TAB = "DATA TELESALE"
+
 
 def _get_credentials() -> Credentials:
     """Thử Streamlit Secrets trước (khi chạy trên cloud), fallback về file local."""
@@ -115,7 +117,9 @@ def load_data() -> pd.DataFrame:
     data_rows = []
     sheet_row_indices = []
     for i, row in enumerate(rows[1:], start=2):
-        if not row or not row[0].strip():  # bỏ dòng trống (User Guide cũ tại I56:L90 có A trống)
+        # Bỏ qua chỉ khi cả Tên khách lẫn Số ĐT đều trống (row hoàn toàn rỗng)
+        # Giữ lại row có Số ĐT nhưng không có tên (lead không rõ tên vẫn cần theo dõi)
+        if not row or (not row[0].strip() and (len(row) < 2 or not row[1].strip())):
             continue
         data_rows.append(row + [""] * (9 - len(row)))
         sheet_row_indices.append(i)
@@ -129,8 +133,9 @@ def load_data() -> pd.DataFrame:
 def append_row(row_dict: dict):
     ws = _get_ws()
     row = [str(row_dict.get(c, "")) for c in COLUMNS]
-    # Tính next_row từ cột A — tránh bị User Guide (M56:P90) đánh lừa Sheets API
-    next_row = len([v for v in ws.col_values(1) if v]) + 1
+    # len(col_values(1)) = số row cuối có data trong col A (bao gồm gaps)
+    # KHÔNG dùng filter `if v` — filter loại bỏ gaps → undercount → ghi đè row đã có data
+    next_row = len(ws.col_values(1)) + 1
     ws.update(values=[row], range_name=f"A{next_row}:I{next_row}", value_input_option="RAW")
 
 
@@ -277,6 +282,119 @@ def transfer_checked_leads() -> list:
         highlight_new_row(base_row + i)
     for _, sheet_row in sorted(checked, key=lambda x: x[1], reverse=True):
         ws.delete_rows(sheet_row)
+    return [rd["Tên khách"] for rd, _ in checked]
+
+
+# ── TELESALE TAB "DATA TELESALE" ──────────────────────────────────────────────
+
+@retry_api_call()
+def ensure_telesale_tab():
+    """Lấy hoặc tạo mới tab 'DATA TELESALE' với header cam + checkbox cột I."""
+    creds = _get_credentials()
+    client = gspread.authorize(creds)
+    ss = client.open_by_key(SHEET_ID)
+    try:
+        ws = ss.worksheet(TELESALE_TAB)
+        # Tab đã tồn tại — đảm bảo đủ rows cho import lớn
+        if ws.row_count < 1500:
+            ws.add_rows(1500 - ws.row_count)
+    except gspread.exceptions.WorksheetNotFound:
+        ws = ss.add_worksheet(title=TELESALE_TAB, rows=1500, cols=9)
+        header = COLUMNS[:8] + ["✓ Chuyển CRM"]
+        ws.update(values=[header], range_name="A1:I1")
+        # Header màu cam đậm #E65100 để phân biệt với CRM (navy) và Staging (vàng)
+        ws.format("A1:I1", {
+            "textFormat": {"bold": True, "foregroundColor": {"red": 1, "green": 1, "blue": 1}},
+            "backgroundColor": {"red": 0.902, "green": 0.318, "blue": 0.0},
+        })
+        ws.freeze(rows=1)
+        # Checkbox BOOLEAN cho toàn bộ cột I (1500 rows = đủ cho ~1000 số import)
+        ss.batch_update({"requests": [{
+            "setDataValidation": {
+                "range": {
+                    "sheetId": ws.id,
+                    "startRowIndex": 1,
+                    "endRowIndex": 1500,
+                    "startColumnIndex": 8,
+                    "endColumnIndex": 9,
+                },
+                "rule": {"condition": {"type": "BOOLEAN"}, "strict": True},
+            }
+        }]})
+    return ws
+
+
+@retry_api_call()
+def append_telesale_rows(rows_list: list):
+    """Ghi nhiều số vào tab DATA TELESALE — batch 50 dòng để tránh API 429."""
+    ws = ensure_telesale_tab()
+    col_a = ws.col_values(1)
+    next_row = max(len(col_a) + 1, 2)
+    BATCH = 50
+    for start in range(0, len(rows_list), BATCH):
+        batch = rows_list[start:start + BATCH]
+        values = [[str(r.get(c, "")) for c in COLUMNS[:8]] for r in batch]
+        end_row = next_row + len(batch) - 1
+        ws.update(values=values, range_name=f"A{next_row}:H{end_row}", value_input_option="RAW")
+        next_row += len(batch)
+        if start + BATCH < len(rows_list):
+            time.sleep(1)
+
+
+@retry_api_call()
+def load_telesale_data():
+    """Đọc tab DATA TELESALE — trả về (DataFrame 8 cột, list sheet_row_indices)."""
+    ws = ensure_telesale_tab()
+    rows = ws.get("A:I")
+    if not rows or len(rows) < 2:
+        return pd.DataFrame(columns=COLUMNS[:8]), []
+    records, sheet_indices = [], []
+    for i, row in enumerate(rows[1:], start=2):
+        padded = row + [""] * (9 - len(row))
+        # Bỏ qua dòng hoàn toàn trống (cả Tên khách lẫn Số ĐT đều trống)
+        # Không bỏ qua dòng chỉ thiếu tên nhưng còn SĐT (14 số import không có tên)
+        if not padded[0].strip() and not padded[1].strip():
+            continue
+        records.append(padded[:8])
+        sheet_indices.append(i)
+    df = pd.DataFrame(records, columns=COLUMNS[:8]).fillna("") if records else pd.DataFrame(columns=COLUMNS[:8])
+    return df, sheet_indices
+
+
+@retry_api_call()
+def _delete_ws_row(ws, row_idx: int):
+    """Xóa 1 dòng khỏi worksheet với retry riêng — tránh retry toàn bộ transfer gây duplicate."""
+    ws.delete_rows(int(row_idx))
+
+
+def transfer_telesale_checked() -> list:
+    """Chuyển các dòng đã tích ✓ từ DATA TELESALE vào CRM với trạng thái 'Đang chăm sóc'.
+    Không có @retry_api_call ở cấp function — retry chỉ áp dụng cho từng append_row và delete riêng lẻ.
+    Nếu để @retry_api_call ở đây: khi phase xóa bị 429 và retry, append_row chạy lại → duplicate CRM.
+    """
+    ws = ensure_telesale_tab()
+    rows = ws.get("A:I")
+    if not rows or len(rows) < 2:
+        return []
+    today_str = date.today().strftime("%Y-%m-%d")
+    checked = []
+    for i, row in enumerate(rows[1:], start=2):
+        padded = row + [""] * (9 - len(row))
+        if str(padded[8]).strip().upper() == "TRUE":
+            row_dict = dict(zip(COLUMNS[:8], padded[:8]))
+            checked.append((row_dict, i))
+    if not checked:
+        return []
+    cdf = load_data()
+    base_row = (max(cdf.index) + 1) if not cdf.empty else 2
+    for i, (row_dict, _) in enumerate(checked):
+        row_dict["Trạng thái"] = "Đang chăm sóc"
+        row_dict["Ngày tương tác cuối"] = today_str
+        append_row(row_dict)
+        highlight_new_row(base_row + i)
+    # Xóa ngược thứ tự để tránh index shift; dùng _delete_ws_row có retry riêng
+    for _, sheet_row in sorted(checked, key=lambda x: x[1], reverse=True):
+        _delete_ws_row(ws, sheet_row)
     return [rd["Tên khách"] for rd, _ in checked]
 
 

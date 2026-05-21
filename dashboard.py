@@ -31,7 +31,8 @@ if _BASE_DIR not in sys.path:
 from sheets_connector import (
     load_data, append_row, update_row, COLUMNS, load_config, save_config,
     highlight_new_row, unhighlight_row, append_staging_row, load_staging_data,
-    transfer_checked_leads, delete_crm_row, ensure_staging_tab, backup_to_csv
+    transfer_checked_leads, delete_crm_row, ensure_staging_tab, backup_to_csv,
+    load_telesale_data, append_telesale_rows, transfer_telesale_checked, ensure_telesale_tab,
 )
 
 # ── CÁU HÌNH & KHỞI TẠO ──
@@ -157,6 +158,10 @@ def get_cached_crm_data():
 def get_cached_staging_data():
     return load_staging_data()
 
+@st.cache_data(ttl=300)
+def get_cached_telesale_data():
+    return load_telesale_data()
+
 def clear_cache():
     st.cache_data.clear()
     st.toast("🔄 Đã tải lại dữ liệu mới nhất từ Google Sheets!", icon="⚡")
@@ -184,7 +189,9 @@ with st.sidebar:
             "🏠 Tổng quan & Báo cáo",
             "📋 Danh sách Leads CRM",
             "📥 Số Mới Chờ Duyệt (Staging)",
+            "📞 Data Telesale",
             "⚡ Nhập Số Hàng Loạt & Phân Chia",
+            "💡 Kịch Bản Tư Vấn",
             "👥 Quản lý Team & Cấu hình"
         ],
         index=0
@@ -200,6 +207,7 @@ with st.sidebar:
 with st.spinner("Đang kết nối Google Sheets..."):
     df_crm = get_cached_crm_data()
     df_stg, stg_indices = get_cached_staging_data()
+    df_tele, tele_indices = get_cached_telesale_data()
 
 today_str = date.today().strftime("%Y-%m-%d")
 
@@ -778,6 +786,192 @@ elif menu == "📥 Số Mới Chờ Duyệt (Staging)":
                     st.warning("⚠️ Không tìm thấy lead nào được tích ✓ trong tab 'SỐ MỚI KS' trên Google Sheets.")
 
 # ───────────────────────────────────────────────────────────────────────────
+# 📞 DATA TELESALE
+# ───────────────────────────────────────────────────────────────────────────
+elif menu == "📞 Data Telesale":
+    st.markdown('<p class="header-title">📞 DATA TELESALE — DANH SÁCH GỌI COLD-CALL</p>', unsafe_allow_html=True)
+    st.markdown('<p class="header-subtitle">Hiển nhập danh sách số → Hệ thống phân công Sale → Sale gọi và tích ✓ số có nhu cầu → Tự động chuyển vào CRM với trạng thái "Đang chăm sóc".</p>', unsafe_allow_html=True)
+
+    # ── SECTION A: NHẬP SỐ MỚI ──
+    with st.expander("📥 NHẬP SỐ MỚI VÀO DATA TELESALE", expanded=len(df_tele) == 0):
+        st.info("""
+        💡 Định dạng chấp nhận (Mỗi dòng một số):
+        - Chỉ số ĐT: `0987123456`
+        - Tên - SĐT: `Anh Bình - 0912345678`
+        - Tên, SĐT: `Chị Lan, 0345678912`
+        """)
+
+        raw_tele_text = st.text_area(
+            "Dán danh sách số vào đây:",
+            height=180,
+            placeholder="0987123456\nAnh Hùng - 0912345678\nChị Mai, 0933445566",
+            key="tele_raw_input"
+        )
+
+        col_t1, col_t2, col_t3 = st.columns(3)
+        with col_t1:
+            tele_source = st.text_input("Nguồn:", "Telesale", key="tele_source")
+        with col_t2:
+            tele_sales_selected = st.multiselect(
+                "Sale nhận số đợt này:",
+                options=sale_team,
+                default=sale_team,
+                key="tele_sale_select"
+            )
+        with col_t3:
+            tele_mode = st.radio(
+                "Chế độ chia:",
+                ["Ngẫu nhiên", "Xoay vòng"],
+                horizontal=True,
+                key="tele_mode"
+            )
+
+        tele_note = st.text_input("Ghi chú đính kèm:", f"Telesale {today_str}", key="tele_note")
+
+        if st.button("🔍 Xem trước danh sách", key="tele_preview_btn"):
+            if not raw_tele_text.strip():
+                st.error("Vui lòng nhập danh sách số!")
+            elif not tele_sales_selected:
+                st.error("Vui lòng chọn ít nhất 1 Sale!")
+            else:
+                lines = raw_tele_text.strip().split("\n")
+                parsed = []
+                for line in lines:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    parts = []
+                    for sep in ("-", ",", "\t", ";"):
+                        if sep in line:
+                            parts = [p.strip() for p in line.split(sep, 1)]
+                            break
+                    if len(parts) == 2:
+                        name, phone = parts[0], parts[1]
+                    else:
+                        name, phone = "Khách Telesale", line
+                    cleaned_p = clean_phone_number(phone)
+                    if cleaned_p and validate_phone(cleaned_p):
+                        parsed.append({"Tên khách": name, "Số ĐT": cleaned_p})
+
+                seen = set()
+                final, dups = [], 0
+                for lead in parsed:
+                    ph = lead["Số ĐT"]
+                    if ph in seen:
+                        dups += 1
+                        continue
+                    dup_crm = df_crm[df_crm["Số ĐT"].str.strip() == ph] if not df_crm.empty else pd.DataFrame()
+                    dup_stg = df_stg[df_stg["Số ĐT"].str.strip() == ph] if not df_stg.empty else pd.DataFrame()
+                    dup_tele = df_tele[df_tele["Số ĐT"].str.strip() == ph] if not df_tele.empty else pd.DataFrame()
+                    if not dup_crm.empty or not dup_stg.empty or not dup_tele.empty:
+                        dups += 1
+                        continue
+                    seen.add(ph)
+                    final.append(lead)
+
+                st.session_state["tele_preview"] = final
+                c1, c2, c3 = st.columns(3)
+                c1.metric("Dòng đầu vào", len(lines))
+                c2.metric("Số hợp lệ & mới", len(final))
+                c3.metric("Trùng đã lọc", dups)
+                if final:
+                    df_prev = pd.DataFrame(final)
+                    st.dataframe(df_prev, use_container_width=True)
+                    st.success(f"✔ {len(final)} số sẵn sàng nhập. Nhấn **Xác nhận nhập** để ghi vào hệ thống.")
+
+        if st.button("📥 Xác nhận Nhập vào DATA TELESALE", key="tele_import_btn", type="primary"):
+            preview = st.session_state.get("tele_preview")
+            if not preview:
+                st.warning("Vui lòng nhấn 'Xem trước danh sách' trước để kiểm tra.")
+            elif not tele_sales_selected:
+                st.error("Vui lòng chọn ít nhất 1 Sale!")
+            else:
+                with st.spinner("Đang ghi vào Google Sheets..."):
+                    records = []
+                    next_idx = 0
+                    if "Xoay vòng" in tele_mode and not df_tele.empty:
+                        last_sale = df_tele["Sale chăm sóc"].iloc[-1]
+                        if last_sale in tele_sales_selected:
+                            next_idx = (tele_sales_selected.index(last_sale) + 1) % len(tele_sales_selected)
+                    for i, lead in enumerate(preview):
+                        if "Ngẫu nhiên" in tele_mode:
+                            assigned = random.choice(tele_sales_selected)
+                        else:
+                            assigned = tele_sales_selected[(next_idx + i) % len(tele_sales_selected)]
+                        records.append({
+                            "Tên khách": lead["Tên khách"],
+                            "Số ĐT": lead["Số ĐT"],
+                            "Nguồn": tele_source,
+                            "Sale chăm sóc": assigned,
+                            "Trạng thái": "",
+                            "Ghi chú": tele_note,
+                            "Ngày tiếp cận": today_str,
+                            "Ngày tương tác cuối": today_str,
+                        })
+                    ensure_telesale_tab()
+                    append_telesale_rows(records)
+                    st.session_state.pop("tele_preview", None)
+                    clear_cache()
+                st.success(f"🎉 Đã nhập thành công **{len(records)}** số vào tab DATA TELESALE!")
+                st.rerun()
+
+    st.markdown("---")
+
+    # ── SECTION B: DANH SÁCH ĐANG CHỜ GỌI ──
+    st.markdown('<p style="font-size: 1.2rem; font-weight: 700; color: #F8FAFC; margin-bottom: 10px;">📋 DANH SÁCH SỐ ĐANG CHỜ GỌI</p>', unsafe_allow_html=True)
+
+    if df_tele.empty:
+        st.info("📭 Tab DATA TELESALE đang trống. Nhập số mới ở phần trên để bắt đầu.")
+    else:
+        st.markdown(f"📞 Hiện có **{len(df_tele)}** số trong danh sách telesale.")
+
+        html_tele_table = """
+        <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse: collapse; background-color: #1E293B; border-radius: 12px; overflow: hidden;">
+        <thead>
+        <tr style="background-color: #7C2D12; text-align: left; color: #FED7AA; border-bottom: 2px solid #EA580C;">
+        <th style="padding: 12px 16px;">Tên Khách</th>
+        <th style="padding: 12px 16px;">Số Điện Thoại</th>
+        <th style="padding: 12px 16px;">Sale Phụ Trách</th>
+        <th style="padding: 12px 16px;">Nguồn</th>
+        <th style="padding: 12px 16px;">Ghi Chú</th>
+        <th style="padding: 12px 16px;">Ngày Thêm</th>
+        <th style="padding: 12px 16px;">Trạng thái</th>
+        </tr>
+        </thead>
+        <tbody>
+        """
+        for _, row in df_tele.iterrows():
+            html_tele_table += f"""
+            <tr style="border-bottom: 1px solid #334155;">
+            <td style="padding: 12px 16px; font-weight: 600; color: #FFF;">{row['Tên khách']}</td>
+            <td style="padding: 12px 16px;">{format_phone_display(row['Số ĐT'])}</td>
+            <td style="padding: 12px 16px; font-weight: 600; color: #FB923C;">{row['Sale chăm sóc']}</td>
+            <td style="padding: 12px 16px;">{row['Nguồn']}</td>
+            <td style="padding: 12px 16px; font-size: 0.9rem;">{row['Ghi chú']}</td>
+            <td style="padding: 12px 16px;">{row['Ngày tiếp cận']}</td>
+            <td style="padding: 12px 16px;"><span class="custom-badge badge-warning">Chờ gọi</span></td>
+            </tr>
+            """
+        html_tele_table += "</tbody></table></div>"
+        st.markdown(clean_html(html_tele_table), unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown('<p style="font-size: 1.2rem; font-weight: 700; color: #F8FAFC; margin-bottom: 10px;">🚀 CHUYỂN LEADS ĐÃ GỌI VÀO CRM</p>', unsafe_allow_html=True)
+        st.info("💡 Hướng dẫn: Sale mở Google Sheets → Tab **DATA TELESALE** → Tích ✓ cột **'✓ Chuyển CRM'** cho số khách có nhu cầu → Quay lại đây nhấn nút bên dưới.")
+
+        if st.button("🚀 Chuyển leads đã tích ✓ vào CRM (Đang chăm sóc)", use_container_width=True, key="tele_transfer_btn"):
+            with st.spinner("Đang quét và chuyển leads đã tích ✓..."):
+                transferred = transfer_telesale_checked()
+                if transferred:
+                    backup_to_csv()
+                    clear_cache()
+                    st.success(f"✔ Đã chuyển **{len(transferred)}** leads vào CRM: {', '.join(transferred)}")
+                    st.rerun()
+                else:
+                    st.warning("⚠️ Không tìm thấy số nào được tích ✓ trong tab 'DATA TELESALE' trên Google Sheets.")
+
+# ───────────────────────────────────────────────────────────────────────────
 # ⚡ NHẬP SỐ HÀNG LOẠT & TỰ ĐỘNG CHIA LEADS (BULK IMPORT)
 # ───────────────────────────────────────────────────────────────────────────
 elif menu == "⚡ Nhập Số Hàng Loạt & Phân Chia":
@@ -961,6 +1155,85 @@ elif menu == "⚡ Nhập Số Hàng Loạt & Phân Chia":
                     st.table(summary_count)
                     
                     st.success("🎉 Đợt phân phối leads hàng loạt hoàn thành mỹ mãn! Leads đã chuyển vào tab Staging chờ Sale tiếp cận cuộc gọi đầu.")
+
+# ───────────────────────────────────────────────────────────────────────────
+# 💡 KỊCH BẢN TƯ VẤN (CUSTOMER CONSULTATION TOOLKIT)
+# ───────────────────────────────────────────────────────────────────────────
+elif menu == "💡 Kịch Bản Tư Vấn":
+    st.markdown('<p class="header-title">💡 KỊCH BẢN TƯ VẤN THỰC CHIẾN</p>', unsafe_allow_html=True)
+    st.markdown('<p class="header-subtitle">Hệ thống mẫu câu Telesale, tin nhắn Zalo chăm sóc và kịch bản đối thoại xử lý từ chối giúp Sale tăng tỉ lệ chốt lịch hẹn.</p>', unsafe_allow_html=True)
+    
+    try:
+        from consultation.loader import get_topics, get_templates_by_topic, render_template_content
+        
+        topics = get_topics()
+        if not topics:
+            st.error("⚠️ Không thể tải danh sách chủ đề kịch bản từ templates.yaml. Vui lòng kiểm tra lại file cấu hình.")
+        else:
+            col_cfg, col_disp = st.columns([1, 2])
+            
+            with col_cfg:
+                st.markdown("### ⚙️ THIẾT LẬP KỊCH BẢN")
+                
+                # Chọn Sale đăng nhập
+                selected_sale = st.selectbox(
+                    "👤 1. Chọn Sale đăng nhập:",
+                    sale_team,
+                    index=0
+                )
+                
+                # Chọn Nhóm kịch bản
+                selected_topic = st.selectbox(
+                    "📁 2. Chọn nhóm kịch bản:",
+                    topics,
+                    index=0
+                )
+                
+                # Lấy danh sách mẫu tin của chủ đề này
+                templates = get_templates_by_topic(selected_topic)
+                template_names = [t.get("name") for t in templates] if templates else []
+                
+                # Chọn mẫu tin cụ thể
+                if template_names:
+                    selected_template_name = st.selectbox(
+                        "📝 3. Chọn mẫu cụ thể:",
+                        template_names,
+                        index=0
+                    )
+                else:
+                    st.warning("Không có kịch bản nào trong nhóm này.")
+                    selected_template_name = None
+                    
+            with col_disp:
+                st.markdown("### 👁️ NỘI DUNG TƯ VẤN MẪU")
+                
+                if selected_template_name:
+                    # Lấy mẫu tin tương ứng
+                    matched_template = next(t for t in templates if t.get("name") == selected_template_name)
+                    raw_content = matched_template.get("content", "")
+                    
+                    # Thay thế placeholders
+                    rendered_content = render_template_content(raw_content, sale_name=selected_sale)
+                    
+                    # Hiển thị thông báo trạng thái
+                    st.success(f"✨ Đã cá nhân hóa kịch bản cho chuyên viên: **{selected_sale}**")
+                    
+                    # Render trực quan dạng Markdown trong premium card
+                    st.markdown('<div class="premium-card">', unsafe_allow_html=True)
+                    st.markdown(rendered_content)
+                    st.markdown('</div>', unsafe_allow_html=True)
+                    
+                    # Khung sao chép nhanh (One-click copy) bằng st.code
+                    st.markdown("**📋 Hộp sao chép nhanh kịch bản (Nhấn nút Copy ở góc trên bên phải):**")
+                    st.code(rendered_content, language=None)
+                    
+                    st.caption("💡 *Mẹo: Hãy thay thế phần [Tên] bằng tên thực tế của khách hàng trước khi gửi đi Zalo nhé.*")
+                else:
+                    st.info("Vui lòng lựa chọn đầy đủ thông tin bên cột trái để hiển thị kịch bản.")
+                    
+    except Exception as e:
+        st.error(f"⚠️ Có lỗi xảy ra khi khởi chạy bộ công cụ tư vấn: {e}")
+        st.info("Liên hệ Admin để hỗ trợ kỹ thuật.")
 
 # ───────────────────────────────────────────────────────────────────────────
 # 👥 QUẢN LÝ TEAM & CẤU HÌNH (SETTINGS)
